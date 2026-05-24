@@ -750,36 +750,24 @@ vegaEmbed("#chart-rank", {
   ],
 }, O);
 
-// ─── CHART 4: Gold by sport — FIX: short annotation, view clip false ──────────
+// ─── CHART 4: Radial bar — Gold medals by sport (custom idiom) ───────────────
+const goldBySport = bySport.filter(d => d.Medal === "Gold").sort((a,b) => b.count - a.count).slice(0,12);
+goldBySport.forEach((d,i) => { d.rank = i; });
+
 vegaEmbed("#chart-gold-sport", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: "container", height: 380, config: CFG,
-  view: { clip: false },
-  data: {
-    values: bySport.filter(d => d.Medal === "Gold").sort((a,b) => b.count - a.count).slice(0,12),
-  },
+  width: "container", height: 480, config: CFG,
+  data: { values: goldBySport },
   layer: [
-    {
-      mark: { type: "bar", cornerRadiusTopRight: 3, cornerRadiusBottomRight: 3, clip: false },
-      encoding: {
-        y: { field: "Sport", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
-        x: { field: "count", type: "quantitative", axis: { title: "Gold medals", grid: true }, scale: { domain: [0, 68] } },
-        color: { condition: { test: "datum.Sport=='Swimming'", value: GOLD }, value: "#2A4A3A" },
-        tooltip: [{ field: "Sport" }, { field: "count", title: "Gold medals" }],
-      },
-    },
-    {
-      mark: { type: "text", align: "left", dx: 4, fontSize: 11, fontWeight: 700, clip: false },
-      transform: [{ filter: "datum.Sport == 'Swimming'" }],
-      encoding: {
-        y: { field: "Sport", type: "nominal", sort: "-x" },
-        x: { field: "count", type: "quantitative", scale: { domain: [0, 68] } },
-        text: { value: "← 60 golds, more than Athletics + Cycling combined" },
-        color: { value: GOLD },
-      },
-    },
+    { mark: { type: "arc", opacity: 0.07 }, encoding: { theta: { value: 0 }, theta2: { value: 6.283 }, radius: { field: "rank", type: "quantitative", scale: { domain: [0,11], range: [40,280] } }, radius2: { expr: "scale('radius', datum.rank) + 18" }, color: { value: "#ffffff" }, order: { field: "rank" } } },
+    { mark: { type: "arc", cornerRadius: 2 }, encoding: { theta: { value: 0 }, theta2: { field: "count", type: "quantitative", scale: { domain: [0,65], range: [0,6.1] } }, radius: { field: "rank", type: "quantitative", scale: { domain: [0,11], range: [40,280] } }, radius2: { expr: "scale('radius', datum.rank) + 18" }, color: { condition: { test: "datum.Sport == 'Swimming'", value: GOLD }, field: "count", type: "quantitative", scale: { domain: [0,60], range: ["#1f6b44","#2dd4a0"] }, legend: null }, tooltip: [{ field: "Sport" }, { field: "count", title: "Gold medals" }], order: { field: "rank" } } },
+    { mark: { type: "text", align: "left", baseline: "middle", dx: 4, fontSize: 11, fontWeight: 500 }, encoding: { theta: { value: 0.05 }, radius: { field: "rank", type: "quantitative", scale: { domain: [0,11], range: [40,280] } }, text: { field: "Sport" }, color: { condition: { test: "datum.Sport == 'Swimming'", value: GOLD }, value: MUTED }, order: { field: "rank" } } },
+    { mark: { type: "text", align: "left", baseline: "middle", dx: 6, fontSize: 11, fontWeight: 700 }, encoding: { theta: { field: "count", type: "quantitative", scale: { domain: [0,65], range: [0,6.1] } }, radius: { field: "rank", type: "quantitative", scale: { domain: [0,11], range: [40,280] } }, text: { field: "count", type: "quantitative" }, color: { condition: { test: "datum.Sport == 'Swimming'", value: GOLD }, value: TEXT }, order: { field: "rank" } } },
+    { mark: { type: "text", fontSize: 13, fontWeight: 700, dy: -8 }, data: { values: [{ label: "Gold" }] }, encoding: { text: { field: "label" }, color: { value: GOLD } } },
+    { mark: { type: "text", fontSize: 11, dy: 10 }, data: { values: [{ label: "Medals" }] }, encoding: { text: { field: "label" }, color: { value: MUTED } } },
   ],
 }, O);
+
 
 // ─── CHART 5: All medals stacked bar ─────────────────────────────────────────
 vegaEmbed("#chart-sport-all", {
