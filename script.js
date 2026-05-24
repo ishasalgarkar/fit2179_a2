@@ -752,76 +752,66 @@ vegaEmbed("#chart-rank", {
 
 
 
-// ─── CHART 4: Radial bar — Gold medals by sport ──────────────────────────────
+// ─── CHART 4: Lollipop — Gold medals by sport (custom idiom) ────────────────
 const goldBySport = bySport
   .filter(d => d.Medal === "Gold")
   .sort((a, b) => b.count - a.count)
-  .slice(0, 10);
-goldBySport.forEach((d, i) => { d.rank = i; });
-
-const RING_W = 16, RING_GAP = 4, RING_START = 50;
-goldBySport.forEach((d, i) => {
-  d.innerR = RING_START + i * (RING_W + RING_GAP);
-  d.outerR = d.innerR + RING_W;
-});
+  .slice(0, 12);
 
 vegaEmbed("#chart-gold-sport", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: 420, height: 420,
-  autosize: { type: "fit", contains: "padding" },
-  config: CFG,
+  width: "container", height: 400, config: CFG,
   data: { values: goldBySport },
   layer: [
+    // Stem line from 0 to count
     {
-      mark: { type: "arc", opacity: 0.08 },
+      mark: { type: "rule", strokeWidth: 2.5 },
       encoding: {
-        theta: { value: 0 }, theta2: { value: 6.283 },
-        radius: { field: "innerR", type: "quantitative", scale: null },
-        radius2: { field: "outerR", type: "quantitative", scale: null },
-        color: { value: "#ffffff" }, order: { field: "rank" },
+        y: { field: "Sport", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
+        x: { value: 0 },
+        x2: { field: "count", type: "quantitative" },
+        color: {
+          condition: { test: "datum.Sport == 'Swimming'", value: GOLD },
+          value: "#2a4a3a",
+        },
       },
     },
+    // Circle at end of stem
     {
-      mark: { type: "arc", cornerRadius: 3 },
+      mark: { type: "point", filled: true, size: 120, strokeWidth: 0 },
       encoding: {
-        theta: { value: 0 },
-        theta2: { field: "count", type: "quantitative", scale: { domain: [0,65], range: [0,5.8] } },
-        radius: { field: "innerR", type: "quantitative", scale: null },
-        radius2: { field: "outerR", type: "quantitative", scale: null },
-        color: { condition: { test: "datum.Sport == \'Swimming\'", value: GOLD }, value: GREEN },
+        y: { field: "Sport", type: "nominal", sort: "-x" },
+        x: { field: "count", type: "quantitative", axis: { title: "Gold medals", grid: true }, scale: { domain: [0, 68] } },
+        color: {
+          condition: { test: "datum.Sport == 'Swimming'", value: GOLD },
+          value: GREEN,
+        },
         tooltip: [{ field: "Sport" }, { field: "count", title: "Gold medals" }],
-        order: { field: "rank" },
       },
     },
+    // Count label next to circle
     {
-      mark: { type: "text", align: "left", baseline: "middle", dx: 4, fontSize: 10, fontWeight: 500 },
+      mark: { type: "text", align: "left", dx: 10, fontSize: 11, fontWeight: 600 },
       encoding: {
-        theta: { value: 0.04 },
-        radius: { field: "innerR", type: "quantitative", scale: null },
-        text: { field: "Sport" },
-        color: { condition: { test: "datum.Sport == \'Swimming\'", value: GOLD }, value: MUTED },
-        order: { field: "rank" },
-      },
-    },
-    {
-      mark: { type: "text", align: "left", baseline: "middle", dx: 5, fontSize: 10, fontWeight: 700 },
-      encoding: {
-        theta: { field: "count", type: "quantitative", scale: { domain: [0,65], range: [0,5.8] } },
-        radius: { field: "innerR", type: "quantitative", scale: null },
+        y: { field: "Sport", type: "nominal", sort: "-x" },
+        x: { field: "count", type: "quantitative", scale: { domain: [0, 68] } },
         text: { field: "count", type: "quantitative" },
-        color: { condition: { test: "datum.Sport == \'Swimming\'", value: GOLD }, value: TEXT },
-        order: { field: "rank" },
+        color: {
+          condition: { test: "datum.Sport == 'Swimming'", value: GOLD },
+          value: MUTED,
+        },
       },
     },
+    // Swimming annotation
     {
-      mark: { type: "text", fontSize: 20, fontWeight: 800, dy: -10 },
-      data: { values: [{ label: "Gold" }] },
-      encoding: { text: { field: "label" }, color: { value: GOLD } },
-    },
-    {
-      mark: { type: "text", fontSize: 11, dy: 10 },
-      data: { values: [{ label: "Medals" }] },
-      encoding: { text: { field: "label" }, color: { value: MUTED } },
+      mark: { type: "text", align: "left", dx: 10, dy: -12, fontSize: 10, fontStyle: "italic" },
+      transform: [{ filter: "datum.Sport == 'Swimming'" }],
+      encoding: {
+        y: { field: "Sport", type: "nominal", sort: "-x" },
+        x: { field: "count", type: "quantitative", scale: { domain: [0, 68] } },
+        text: { value: "more than Athletics + Cycling combined" },
+        color: { value: GOLD },
+      },
     },
   ],
 }, O);
@@ -1115,55 +1105,87 @@ vegaEmbed("#chart-ages", {
   resolve: { scale: { y: "shared" } },
 }, O);
 
-// ─── MAP 4: Host cities — custom annotated bubble+band chart ──────────────────
+// ─── MAP 4: Host cities bubble chart ─────────────────────────────────────────
+const hostCitiesFiltered = hostCities.filter(d => d.year >= 1980);
+
 vegaEmbed("#map-host-cities", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: "container", height: 340, config: CFG,
+  width: "container", height: 360, config: CFG,
+  data: { values: hostCitiesFiltered },
   layer: [
-    // Trend line connecting bubbles
+    // Trend line
     {
-      data: { values: hostCities.filter(d => d.aus_medals > 0) },
       mark: { type: "line", strokeWidth: 1.5, color: "rgba(45,212,160,0.2)", strokeDash: [4,3] },
+      transform: [{ filter: "datum.aus_medals > 0" }],
       encoding: {
-        x: { field: "year", type: "ordinal" },
-        y: { field: "aus_medals", type: "quantitative", scale: { domain: [0, 70] } },
+        x: { field: "city", type: "ordinal", sort: { field: "year", order: "ascending" } },
+        y: { field: "aus_medals", type: "quantitative", scale: { domain: [0, 72] } },
       },
     },
-    // Bubbles — ordinal year so each Games gets its own column
+    // Bubbles
     {
-      data: { values: hostCities },
-      mark: { type: "circle", opacity: 0.9 },
+      mark: { type: "circle", opacity: 0.92 },
       encoding: {
-        x: { field: "year", type: "ordinal", axis: { title: null, labelFontSize: 12, grid: false, labelAngle: -30 } },
-        y: { field: "aus_medals", type: "quantitative", axis: { title: "Australia medals", grid: true }, scale: { domain: [0, 70] } },
-        size: { field: "aus_medals", type: "quantitative", scale: { range: [100, 2000] }, legend: null },
-        color: { condition: { test: "datum.host==true", value: GOLD }, value: GREEN },
-        tooltip: [{ field: "city", title: "Host city" }, { field: "year", title: "Year" }, { field: "aus_medals", title: "Aus medals" }],
+        x: {
+          field: "city", type: "ordinal",
+          sort: { field: "year", order: "ascending" },
+          axis: { title: null, labelFontSize: 11, labelAngle: -30, grid: false },
+        },
+        y: {
+          field: "aus_medals", type: "quantitative",
+          axis: { title: "Medals", grid: true },
+          scale: { domain: [0, 72] },
+        },
+        size: {
+          field: "aus_medals", type: "quantitative",
+          scale: { domain: [0, 58], range: [80, 2800] },
+          legend: null,
+        },
+        color: {
+          condition: { test: "datum.host == true", value: GOLD },
+          value: GREEN,
+        },
+        tooltip: [
+          { field: "city", title: "City" },
+          { field: "year", title: "Year" },
+          { field: "aus_medals", title: "Medals" },
+        ],
       },
     },
-    // City labels above each bubble
+    // Medal count label inside bubble
     {
-      data: { values: hostCities },
-      mark: { type: "text", dy: -22, fontSize: 10, fontWeight: 600 },
-      encoding: {
-        x: { field: "year", type: "ordinal" },
-        y: { field: "aus_medals", type: "quantitative", scale: { domain: [0, 70] } },
-        text: { field: "city" },
-        color: { condition: { test: "datum.host==true", value: GOLD }, value: MUTED },
-      },
-    },
-    // Medal count inside each bubble
-    {
-      data: { values: hostCities },
       mark: { type: "text", fontSize: 11, fontWeight: 700 },
+      transform: [{ filter: "datum.aus_medals > 0" }],
       encoding: {
-        x: { field: "year", type: "ordinal" },
-        y: { field: "aus_medals", type: "quantitative", scale: { domain: [0, 70] } },
+        x: { field: "city", type: "ordinal", sort: { field: "year", order: "ascending" } },
+        y: { field: "aus_medals", type: "quantitative", scale: { domain: [0, 72] } },
         text: { field: "aus_medals", type: "quantitative" },
-        color: { condition: { test: "datum.aus_medals > 25", value: "#0d1117" }, value: TEXT },
-        opacity: { condition: { test: "datum.aus_medals > 0", value: 1 }, value: 0 },
+        color: {
+          condition: { test: "datum.aus_medals >= 35", value: "#0d1117" },
+          value: TEXT,
+        },
       },
     },
-
+    // Year label below city name
+    {
+      mark: { type: "text", fontSize: 9, dy: 28 },
+      encoding: {
+        x: { field: "city", type: "ordinal", sort: { field: "year", order: "ascending" } },
+        y: { value: 330 },
+        text: { field: "year", type: "ordinal" },
+        color: { value: MUTED },
+      },
+    },
+    // Brisbane "2032" annotation
+    {
+      mark: { type: "text", fontSize: 11, fontWeight: 700, dy: -18 },
+      transform: [{ filter: "datum.city == 'Brisbane'" }],
+      encoding: {
+        x: { field: "city", type: "ordinal", sort: { field: "year", order: "ascending" } },
+        y: { field: "aus_medals", type: "quantitative", scale: { domain: [0, 72] } },
+        text: { value: "2032 →" },
+        color: { value: GOLD },
+      },
+    },
   ],
 }, O);
