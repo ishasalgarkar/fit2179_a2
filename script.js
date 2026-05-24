@@ -840,27 +840,150 @@ vegaEmbed("#chart-summer-winter", {
   ],
 }, O);
 
-// ─── CHART 7: Heatmap ─────────────────────────────────────────────────────────
+// ─── CHART 7: Custom connected heatmap + peak outline + sparklines ───────────
+// Derived data: compute peak decade per sport and total per sport for sparkline
+const sportTotals = {};
+const sportPeak = {};
+for (const d of heatmapFilled) {
+  if (!sportTotals[d.Sport]) { sportTotals[d.Sport] = 0; sportPeak[d.Sport] = { decade: null, count: 0 }; }
+  sportTotals[d.Sport] += d.medal_count;
+  if (d.medal_count > sportPeak[d.Sport].count) {
+    sportPeak[d.Sport] = { decade: d.decade, count: d.medal_count };
+  }
+}
+
+// Add derived fields: isPeak, totalForSport, trendRank (position in decade for sparkline)
+const heatmapDerived = heatmapFilled.map(d => ({
+  ...d,
+  isPeak: sportPeak[d.Sport].decade === d.decade && d.medal_count > 0,
+  sportTotal: sportTotals[d.Sport],
+  // normalised 0-1 for sparkline colour
+  normCount: d.medal_count / (sportPeak[d.Sport].count || 1),
+}));
+
+// Sparkline data: one row per sport, total medals
+const sparklineData = Object.entries(sportTotals).map(([Sport, total]) => ({
+  Sport,
+  total,
+  peak: sportPeak[Sport].decade,
+}));
+
+// Sort order: by total medals descending
+const sportSortOrder = Object.entries(sportTotals)
+  .sort((a, b) => b[1] - a[1])
+  .map(([s]) => s);
+
+const DECADES_ORDER = ["1890s","1900s","1910s","1920s","1930s","1940s","1950s","1960s","1970s","1980s","1990s","2000s","2010s"];
+
+// Main heatmap: layered rect + peak outline + peak gold dot
 vegaEmbed("#chart-heatmap", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: "container", height: 420, config: CFG,
-  data: { values: heatmapFilled },
-  mark: { type: "rect", cornerRadius: 2, stroke: "#0D1117", strokeWidth: 1 },
-  encoding: {
-    x: {
-      field: "decade", type: "ordinal",
-      sort: ["1890s","1900s","1910s","1920s","1930s","1940s","1950s","1960s","1970s","1980s","1990s","2000s","2010s"],
-      axis: { title: "Decade", labelAngle: -30, labelFontSize: 11 },
+  width: "container", height: 440, config: CFG,
+  data: { values: heatmapDerived },
+  layer: [
+    // Layer 1: base coloured rect cells
+    {
+      mark: { type: "rect", stroke: "#0D1117", strokeWidth: 1 },
+      encoding: {
+        x: {
+          field: "decade", type: "ordinal", sort: DECADES_ORDER,
+          axis: { title: "Decade", labelAngle: -30, labelFontSize: 11 },
+        },
+        y: {
+          field: "Sport", type: "nominal", sort: sportSortOrder,
+          axis: { title: null, labelFontSize: 11 },
+        },
+        color: {
+          condition: { test: "datum.medal_count == 0", value: "#0d2318" },
+          field: "medal_count", type: "quantitative",
+          scale: { type: "threshold", domain: [1,3,6,12,24], range: ["#1f6b44","#2aa86a","#4fe0a0","#f0c34a","#ff9a5f","#ff6b35"] },
+          legend: { title: "Medals", orient: "right" },
+        },
+        tooltip: [
+          { field: "Sport" },
+          { field: "decade", title: "Decade" },
+          { field: "medal_count", title: "Medals" },
+          { field: "isPeak", title: "Peak decade?" },
+        ],
+      },
     },
-    y: { field: "Sport", type: "nominal", sort: { field: "medal_count", op: "sum", order: "descending" }, axis: { title: null, labelFontSize: 11 } },
-    color: {
-      condition: { test: "datum.medal_count == 0", value: "#113f33" },
-      field: "medal_count", type: "quantitative",
-      scale: { type: "threshold", domain: [1,3,6,12,24], range: ["#1f6b44","#2aa86a","#4fe0a0","#f0c34a","#ff9a5f","#ff6b35"] },
-      legend: { title: "Medals", orient: "right" },
+    // Layer 2: gold outline rect on peak decade per sport (custom derived idiom)
+    {
+      mark: { type: "rect", filled: false, stroke: GOLD, strokeWidth: 2.5, cornerRadius: 2 },
+      transform: [{ filter: "datum.isPeak == true" }],
+      encoding: {
+        x: { field: "decade", type: "ordinal", sort: DECADES_ORDER },
+        y: { field: "Sport", type: "nominal", sort: sportSortOrder },
+      },
     },
-    tooltip: [{ field: "Sport" }, { field: "decade", title: "Decade" }, { field: "medal_count", title: "Medals" }],
-  },
+    // Layer 3: small gold circle in top-right corner of each peak cell
+    {
+      mark: { type: "point", shape: "circle", filled: true, size: 28, xOffset: 10, yOffset: -10 },
+      transform: [{ filter: "datum.isPeak == true" }],
+      encoding: {
+        x: { field: "decade", type: "ordinal", sort: DECADES_ORDER },
+        y: { field: "Sport", type: "nominal", sort: sportSortOrder },
+        color: { value: GOLD },
+      },
+    },
+    // Layer 4: medal count text label inside cells with ≥6 medals
+    {
+      mark: { type: "text", fontSize: 10, fontWeight: 600 },
+      transform: [{ filter: "datum.medal_count >= 6" }],
+      encoding: {
+        x: { field: "decade", type: "ordinal", sort: DECADES_ORDER },
+        y: { field: "Sport", type: "nominal", sort: sportSortOrder },
+        text: { field: "medal_count", type: "quantitative" },
+        color: {
+          condition: { test: "datum.medal_count >= 12", value: "#0d1117" },
+          value: TEXT,
+        },
+      },
+    },
+  ],
+}, O);
+
+// Sparkline chart alongside heatmap — trend line per sport showing medal trajectory
+vegaEmbed("#chart-heatmap-spark", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: 120, height: 440, config: CFG,
+  data: { values: heatmapDerived },
+  layer: [
+    // Line connecting decades per sport
+    {
+      mark: { type: "line", strokeWidth: 1.5, interpolate: "monotone" },
+      encoding: {
+        x: {
+          field: "decade", type: "ordinal", sort: DECADES_ORDER,
+          axis: { title: "Trend →", labelAngle: -90, labelFontSize: 9, titleFontSize: 10 },
+        },
+        y: {
+          field: "Sport", type: "nominal", sort: sportSortOrder,
+          axis: null,
+        },
+        detail: { field: "Sport", type: "nominal" },
+        color: {
+          field: "medal_count", type: "quantitative",
+          scale: { range: ["#1f6b44", GOLD] },
+          legend: null,
+        },
+        strokeWidth: {
+          condition: { test: "datum.isPeak == true", value: 3 },
+          value: 1,
+        },
+      },
+    },
+    // Peak dot on sparkline
+    {
+      mark: { type: "point", filled: true, size: 40 },
+      transform: [{ filter: "datum.isPeak == true" }],
+      encoding: {
+        x: { field: "decade", type: "ordinal", sort: DECADES_ORDER },
+        y: { field: "Sport", type: "nominal", sort: sportSortOrder },
+        color: { value: GOLD },
+      },
+    },
+  ],
 }, O);
 
 // ─── CHART 8: Sydney scatter ──────────────────────────────────────────────────
