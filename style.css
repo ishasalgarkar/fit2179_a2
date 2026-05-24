@@ -28,7 +28,7 @@ body {
   line-height: 1.7;
 }
 
-/* ── HERO ─────────────────────────────────────────────────────────── */
+
 .hero {
   min-height: 100vh;
   display: flex;
@@ -111,7 +111,7 @@ body {
   text-transform: uppercase;
 }
 
-/* ── NAV ──────────────────────────────────────────────────────────── */
+
 nav {
   position: sticky;
   top: 0;
@@ -145,7 +145,7 @@ nav a:hover {
   border-bottom-color: var(--gold);
 }
 
-/* ── SECTIONS ─────────────────────────────────────────────────────── */
+
 .section-wrap {
   max-width: 1200px;
   margin: 0 auto;
@@ -155,7 +155,7 @@ nav a:hover {
   border-top: 1px solid var(--border);
 }
 
-/* Coloured top bar per section */
+
 #world   { border-top: 3px solid var(--gold) !important; }
 #sports  { border-top: 3px solid var(--green) !important; }
 #sydney  { border-top: 3px solid var(--gold) !important; }
@@ -174,7 +174,7 @@ nav a:hover {
   margin-bottom: 20px;
 }
 
-/* UPGRADED: section titles — heavier weight + gradient underline */
+
 .section-title {
   font-size: clamp(28px, 4vw, 48px);
   font-weight: 900;
@@ -183,7 +183,7 @@ nav a:hover {
   margin-bottom: 20px;
   color: var(--text);
   position: relative;
-  display: inline-block;
+  display: block;
   padding-bottom: 14px;
 }
 .section-title::after {
@@ -207,7 +207,7 @@ nav a:hover {
   margin-top: 20px;
 }
 
-/* ── CHART CARDS ──────────────────────────────────────────────────── */
+
 .chart-card {
   background: var(--bg2);
   border: 1px solid var(--border);
@@ -222,7 +222,7 @@ nav a:hover {
   border-color: rgba(255,255,255,0.14);
 }
 
-/* Alternating left accent borders for visual rhythm */
+
 .chart-card:nth-child(odd) {
   border-left: 3px solid rgba(240,180,41,0.35);
 }
@@ -230,7 +230,7 @@ nav a:hover {
   border-left: 3px solid rgba(45,212,160,0.35);
 }
 
-/* Featured card — used on trajectory + rank charts */
+
 .chart-card.featured {
   background: #12171f;
   border-left: 4px solid var(--gold) !important;
@@ -261,14 +261,14 @@ nav a:hover {
   line-height: 1.7;
 }
 
-/* ── GRID ─────────────────────────────────────────────────────────── */
+
 .grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
 }
 
-/* ── PULL QUOTE ───────────────────────────────────────────────────── */
+
 .pull-quote {
   border-left: 3px solid var(--gold);
   padding: 20px 0 20px 32px;
@@ -284,7 +284,7 @@ nav a:hover {
   font-style: italic;
 }
 
-/* ── STAT PILLS ───────────────────────────────────────────────────── */
+
 .stat-row {
   display: flex;
   gap: 16px;
@@ -324,7 +324,7 @@ nav a:hover {
   letter-spacing: -0.02em;
 }
 
-/* ── FOOTER ───────────────────────────────────────────────────────── */
+
 footer {
   background: var(--bg2);
   border-top: 1px solid var(--border);
@@ -359,7 +359,7 @@ footer a {
   font-size: 12px;
 }
 
-/* ── VEGA ─────────────────────────────────────────────────────────── */
+
 .vega-embed {
   width: 100% !important;
   overflow: visible !important;
@@ -374,7 +374,7 @@ footer a {
   font-size: 13px !important;
 }
 
-/* ── RESPONSIVE ───────────────────────────────────────────────────── */
+
 @media (max-width: 860px) {
   .grid-2 { grid-template-columns: 1fr; }
   .hero, .section-wrap, footer { padding: 60px 24px; }
