@@ -31,6 +31,8 @@ const CFG = {
     titleFontSize: 11,
     titleFontWeight: 500,
     symbolStrokeWidth: 0,
+    // FIX: prevent label truncation
+    labelLimit: 120,
   },
   title: { color: TEXT, font: FONT, fontSize: 13, fontWeight: 500 },
   view: { stroke: null },
@@ -121,126 +123,26 @@ const medalsByYear = [
   { Year: 2016, Medal: "Silver", count: 11 },
 ];
 const perMillion = [
-  {
-    NOC: "FIN",
-    total_medals: 310,
-    country_name: "Finland",
-    medals_per_million: 56.41,
-  },
-  {
-    NOC: "SWE",
-    total_medals: 513,
-    country_name: "Sweden",
-    medals_per_million: 51.7,
-  },
-  {
-    NOC: "HUN",
-    total_medals: 504,
-    country_name: "Hungary",
-    medals_per_million: 51.64,
-  },
-  {
-    NOC: "NOR",
-    total_medals: 155,
-    country_name: "Norway",
-    medals_per_million: 29.61,
-  },
-  {
-    NOC: "JAM",
-    total_medals: 76,
-    country_name: "Jamaica",
-    medals_per_million: 27.05,
-  },
-  {
-    NOC: "EST",
-    total_medals: 34,
-    country_name: "Estonia",
-    medals_per_million: 25.84,
-  },
-  {
-    NOC: "NZL",
-    total_medals: 118,
-    country_name: "New Zealand",
-    medals_per_million: 25.03,
-  },
-  {
-    NOC: "AUS",
-    total_medals: 506,
-    country_name: "Australia",
-    medals_per_million: 20.92,
-  },
-  {
-    NOC: "CUB",
-    total_medals: 214,
-    country_name: "Cuba",
-    medals_per_million: 19.0,
-  },
-  {
-    NOC: "ROU",
-    total_medals: 303,
-    country_name: "Romania",
-    medals_per_million: 15.38,
-  },
-  {
-    NOC: "BEL",
-    total_medals: 166,
-    country_name: "Belgium",
-    medals_per_million: 14.65,
-  },
-  {
-    NOC: "TTO",
-    total_medals: 19,
-    country_name: "Trinidad & Tobago",
-    medals_per_million: 14.03,
-  },
-  {
-    NOC: "GBR",
-    total_medals: 892,
-    country_name: "United Kingdom",
-    medals_per_million: 13.6,
-  },
-  {
-    NOC: "AUT",
-    total_medals: 108,
-    country_name: "Austria",
-    medals_per_million: 12.36,
-  },
-  {
-    NOC: "FRA",
-    total_medals: 770,
-    country_name: "France",
-    medals_per_million: 11.54,
-  },
-  {
-    NOC: "ITA",
-    total_medals: 608,
-    country_name: "Italy",
-    medals_per_million: 10.11,
-  },
-  {
-    NOC: "BLR",
-    total_medals: 84,
-    country_name: "Belarus",
-    medals_per_million: 8.87,
-  },
-  {
-    NOC: "LTU",
-    total_medals: 25,
-    country_name: "Lithuania",
-    medals_per_million: 8.69,
-  },
-  {
-    NOC: "GEO",
-    total_medals: 32,
-    country_name: "Georgia",
-    medals_per_million: 8.58,
-  },
-  {
-    NOC: "CAN",
-    total_medals: 305,
-    country_name: "Canada",
-    medals_per_million: 8.45,
-  },
+  { NOC: "FIN", total_medals: 310, country_name: "Finland", medals_per_million: 56.41 },
+  { NOC: "SWE", total_medals: 513, country_name: "Sweden", medals_per_million: 51.7 },
+  { NOC: "HUN", total_medals: 504, country_name: "Hungary", medals_per_million: 51.64 },
+  { NOC: "NOR", total_medals: 155, country_name: "Norway", medals_per_million: 29.61 },
+  { NOC: "JAM", total_medals: 76, country_name: "Jamaica", medals_per_million: 27.05 },
+  { NOC: "EST", total_medals: 34, country_name: "Estonia", medals_per_million: 25.84 },
+  { NOC: "NZL", total_medals: 118, country_name: "New Zealand", medals_per_million: 25.03 },
+  { NOC: "AUS", total_medals: 506, country_name: "Australia", medals_per_million: 20.92 },
+  { NOC: "CUB", total_medals: 214, country_name: "Cuba", medals_per_million: 19.0 },
+  { NOC: "ROU", total_medals: 303, country_name: "Romania", medals_per_million: 15.38 },
+  { NOC: "BEL", total_medals: 166, country_name: "Belgium", medals_per_million: 14.65 },
+  { NOC: "TTO", total_medals: 19, country_name: "Trinidad & Tobago", medals_per_million: 14.03 },
+  { NOC: "GBR", total_medals: 892, country_name: "United Kingdom", medals_per_million: 13.6 },
+  { NOC: "AUT", total_medals: 108, country_name: "Austria", medals_per_million: 12.36 },
+  { NOC: "FRA", total_medals: 770, country_name: "France", medals_per_million: 11.54 },
+  { NOC: "ITA", total_medals: 608, country_name: "Italy", medals_per_million: 10.11 },
+  { NOC: "BLR", total_medals: 84, country_name: "Belarus", medals_per_million: 8.87 },
+  { NOC: "LTU", total_medals: 25, country_name: "Lithuania", medals_per_million: 8.69 },
+  { NOC: "GEO", total_medals: 32, country_name: "Georgia", medals_per_million: 8.58 },
+  { NOC: "CAN", total_medals: 305, country_name: "Canada", medals_per_million: 8.45 },
 ];
 const worldMedalData = [
   { id: 4, NOC: "AFG", total_medals: 2 },
@@ -342,12 +244,7 @@ const perMillionMapData = [
   { id: 231, NOC: "ETH", country_name: "Ethiopia", medals_per_million: 0.5 },
   { id: 246, NOC: "FIN", country_name: "Finland", medals_per_million: 56.41 },
   { id: 250, NOC: "FRA", country_name: "France", medals_per_million: 11.54 },
-  {
-    id: 826,
-    NOC: "GBR",
-    country_name: "United Kingdom",
-    medals_per_million: 13.6,
-  },
+  { id: 826, NOC: "GBR", country_name: "United Kingdom", medals_per_million: 13.6 },
   { id: 268, NOC: "GEO", country_name: "Georgia", medals_per_million: 8.58 },
   { id: 348, NOC: "HUN", country_name: "Hungary", medals_per_million: 51.64 },
   { id: 356, NOC: "IND", country_name: "India", medals_per_million: 0.02 },
@@ -357,41 +254,21 @@ const perMillionMapData = [
   { id: 392, NOC: "JPN", country_name: "Japan", medals_per_million: 3.44 },
   { id: 398, NOC: "KAZ", country_name: "Kazakhstan", medals_per_million: 3.81 },
   { id: 404, NOC: "KEN", country_name: "Kenya", medals_per_million: 2.08 },
-  {
-    id: 410,
-    NOC: "KOR",
-    country_name: "South Korea",
-    medals_per_million: 5.13,
-  },
+  { id: 410, NOC: "KOR", country_name: "South Korea", medals_per_million: 5.13 },
   { id: 440, NOC: "LTU", country_name: "Lithuania", medals_per_million: 8.69 },
   { id: 504, NOC: "MAR", country_name: "Morocco", medals_per_million: 0.66 },
   { id: 484, NOC: "MEX", country_name: "Mexico", medals_per_million: 0.55 },
   { id: 578, NOC: "NOR", country_name: "Norway", medals_per_million: 29.61 },
-  {
-    id: 554,
-    NOC: "NZL",
-    country_name: "New Zealand",
-    medals_per_million: 25.03,
-  },
+  { id: 554, NOC: "NZL", country_name: "New Zealand", medals_per_million: 25.03 },
   { id: 616, NOC: "POL", country_name: "Poland", medals_per_million: 7.64 },
   { id: 642, NOC: "ROU", country_name: "Romania", medals_per_million: 15.38 },
   { id: 643, NOC: "RUS", country_name: "Russia", medals_per_million: 3.17 },
   { id: 752, NOC: "SWE", country_name: "Sweden", medals_per_million: 51.7 },
   { id: 764, NOC: "THA", country_name: "Thailand", medals_per_million: 0.42 },
-  {
-    id: 780,
-    NOC: "TTO",
-    country_name: "Trinidad & Tobago",
-    medals_per_million: 14.03,
-  },
+  { id: 780, NOC: "TTO", country_name: "Trinidad & Tobago", medals_per_million: 14.03 },
   { id: 792, NOC: "TUR", country_name: "Turkey", medals_per_million: 1.2 },
   { id: 804, NOC: "UKR", country_name: "Ukraine", medals_per_million: 2.76 },
-  {
-    id: 840,
-    NOC: "USA",
-    country_name: "United States",
-    medals_per_million: 7.84,
-  },
+  { id: 840, NOC: "USA", country_name: "United States", medals_per_million: 7.84 },
   { id: 860, NOC: "UZB", country_name: "Uzbekistan", medals_per_million: 1.05 },
   { id: 862, NOC: "VEN", country_name: "Venezuela", medals_per_million: 0.49 },
 ];
@@ -554,31 +431,15 @@ const heatmapData = [
   { Sport: "Triathlon", decade: "2000s", medal_count: 3 },
   { Sport: "Triathlon", decade: "2010s", medal_count: 3 },
 ];
-// Fill missing sport/decade combos (zeros)
+
 const heatmapDecades = [
-  "1890s",
-  "1900s",
-  "1910s",
-  "1920s",
-  "1930s",
-  "1940s",
-  "1950s",
-  "1960s",
-  "1970s",
-  "1980s",
-  "1990s",
-  "2000s",
-  "2010s",
+  "1890s","1900s","1910s","1920s","1930s","1940s",
+  "1950s","1960s","1970s","1980s","1990s","2000s","2010s",
 ];
 const heatmapSports = Array.from(new Set(heatmapData.map((d) => d.Sport)));
-// sort sports by total medals
 heatmapSports.sort((a, b) => {
-  const sumA = heatmapData
-    .filter((d) => d.Sport === a)
-    .reduce((s, d) => s + d.medal_count, 0);
-  const sumB = heatmapData
-    .filter((d) => d.Sport === b)
-    .reduce((s, d) => s + d.medal_count, 0);
+  const sumA = heatmapData.filter((d) => d.Sport === a).reduce((s, d) => s + d.medal_count, 0);
+  const sumB = heatmapData.filter((d) => d.Sport === b).reduce((s, d) => s + d.medal_count, 0);
   return sumB - sumA;
 });
 
@@ -586,17 +447,11 @@ const heatmapFull = [];
 for (const sport of heatmapSports) {
   for (const dec of heatmapDecades) {
     const rec = heatmapData.find((d) => d.Sport === sport && d.decade === dec);
-    heatmapFull.push({
-      Sport: sport,
-      decade: dec,
-      medal_count: rec ? rec.medal_count : 0,
-    });
+    heatmapFull.push({ Sport: sport, decade: dec, medal_count: rec ? rec.medal_count : 0 });
   }
 }
-
-const heatmapMax = Math.max(1, ...heatmapFull.map((d) => d.medal_count));
-// heatmapFilled: filled grid with zeros
 const heatmapFilled = heatmapFull;
+
 const sydneyData = [
   { Sport: "Swimming", sydney_2000: 18, other_games_avg: 7.29 },
   { Sport: "Cycling", sydney_2000: 6, other_games_avg: 3.46 },
@@ -655,102 +510,18 @@ const stateContributions = [
   { state: "Northern Territory", medals: 5 },
 ];
 const hostCities = [
-  {
-    city: "Moscow",
-    year: 1980,
-    lat: 55.75,
-    lon: 37.62,
-    aus_medals: 9,
-    host: false,
-  },
-  {
-    city: "Los Angeles",
-    year: 1984,
-    lat: 34.05,
-    lon: -118.24,
-    aus_medals: 24,
-    host: false,
-  },
-  {
-    city: "Seoul",
-    year: 1988,
-    lat: 37.57,
-    lon: 126.98,
-    aus_medals: 20,
-    host: false,
-  },
-  {
-    city: "Barcelona",
-    year: 1992,
-    lat: 41.39,
-    lon: 2.15,
-    aus_medals: 23,
-    host: false,
-  },
-  {
-    city: "Atlanta",
-    year: 1996,
-    lat: 33.75,
-    lon: -84.39,
-    aus_medals: 41,
-    host: false,
-  },
-  {
-    city: "Sydney",
-    year: 2000,
-    lat: -33.87,
-    lon: 151.21,
-    aus_medals: 58,
-    host: true,
-  },
-  {
-    city: "Athens",
-    year: 2004,
-    lat: 37.98,
-    lon: 23.73,
-    aus_medals: 49,
-    host: false,
-  },
-  {
-    city: "Beijing",
-    year: 2008,
-    lat: 39.91,
-    lon: 116.39,
-    aus_medals: 46,
-    host: false,
-  },
-  {
-    city: "London",
-    year: 2012,
-    lat: 51.51,
-    lon: -0.13,
-    aus_medals: 35,
-    host: false,
-  },
-  {
-    city: "Rio de Janeiro",
-    year: 2016,
-    lat: -22.91,
-    lon: -43.17,
-    aus_medals: 29,
-    host: false,
-  },
-  {
-    city: "Paris",
-    year: 2024,
-    lat: 48.86,
-    lon: 2.35,
-    aus_medals: 53,
-    host: false,
-  },
-  {
-    city: "Brisbane",
-    year: 2032,
-    lat: -27.47,
-    lon: 153.02,
-    aus_medals: 0,
-    host: true,
-  },
+  { city: "Moscow", year: 1980, lat: 55.75, lon: 37.62, aus_medals: 9, host: false },
+  { city: "Los Angeles", year: 1984, lat: 34.05, lon: -118.24, aus_medals: 24, host: false },
+  { city: "Seoul", year: 1988, lat: 37.57, lon: 126.98, aus_medals: 20, host: false },
+  { city: "Barcelona", year: 1992, lat: 41.39, lon: 2.15, aus_medals: 23, host: false },
+  { city: "Atlanta", year: 1996, lat: 33.75, lon: -84.39, aus_medals: 41, host: false },
+  { city: "Sydney", year: 2000, lat: -33.87, lon: 151.21, aus_medals: 58, host: true },
+  { city: "Athens", year: 2004, lat: 37.98, lon: 23.73, aus_medals: 49, host: false },
+  { city: "Beijing", year: 2008, lat: 39.91, lon: 116.39, aus_medals: 46, host: false },
+  { city: "London", year: 2012, lat: 51.51, lon: -0.13, aus_medals: 35, host: false },
+  { city: "Rio de Janeiro", year: 2016, lat: -22.91, lon: -43.17, aus_medals: 29, host: false },
+  { city: "Paris", year: 2024, lat: 48.86, lon: 2.35, aus_medals: 53, host: false },
+  { city: "Brisbane", year: 2032, lat: -27.47, lon: 153.02, aus_medals: 0, host: true },
 ];
 const ageStats = [
   { decade: "1890s", min: 18, q1: 20, median: 22, q3: 26, max: 35 },
@@ -767,890 +538,727 @@ const ageStats = [
   { decade: "2010s", min: 16, q1: 21, median: 24, q3: 28, max: 61 },
 ];
 
-const TOPO =
-  "https://cdn.jsdelivr.net/npm/vega-datasets@2/data/world-110m.json";
+const TOPO = "https://cdn.jsdelivr.net/npm/vega-datasets@2/data/world-110m.json";
 
-// Maps & charts
-vegaEmbed(
-  "#map-world",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 420,
-    config: CFG,
-    projection: { type: "naturalEarth1" },
-    layer: [
-      {
-        data: { url: TOPO, format: { type: "topojson", feature: "countries" } },
-        mark: {
-          type: "geoshape",
-          fill: "#1C2230",
-          stroke: "#0D1117",
-          strokeWidth: 0.5,
+// ─── MAP 1: World total medals ────────────────────────────────────────────────
+vegaEmbed("#map-world", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 420, config: CFG,
+  projection: { type: "naturalEarth1" },
+  layer: [
+    {
+      data: { url: TOPO, format: { type: "topojson", feature: "countries" } },
+      mark: { type: "geoshape", fill: "#1C2230", stroke: "#0D1117", strokeWidth: 0.5 },
+    },
+    {
+      data: { url: TOPO, format: { type: "topojson", feature: "countries" } },
+      transform: [{
+        lookup: "id",
+        from: { data: { values: worldMedalData }, key: "id", fields: ["total_medals", "NOC"] },
+      }],
+      mark: { type: "geoshape", stroke: "#0D1117", strokeWidth: 0.5 },
+      encoding: {
+        color: {
+          field: "total_medals", type: "quantitative",
+          scale: { domain: [1, 2544], type: "log", range: ["#0E4429", "#196F3D", "#2ECC71", "#F0B429", "#FF6B35"] },
+          legend: { title: "Total medals", orient: "bottom-right", gradientLength: 120 },
         },
+        tooltip: [{ field: "NOC", title: "NOC" }, { field: "total_medals", title: "Medals" }],
       },
-      {
-        data: { url: TOPO, format: { type: "topojson", feature: "countries" } },
-        transform: [
-          {
-            lookup: "id",
-            from: {
-              data: { values: worldMedalData },
-              key: "id",
-              fields: ["total_medals", "NOC"],
-            },
-          },
+    },
+  ],
+}, O);
+
+// ─── MAP 2: Medals per million ────────────────────────────────────────────────
+vegaEmbed("#map-per-million", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 420, config: CFG,
+  projection: { type: "naturalEarth1" },
+  layer: [
+    {
+      data: { url: TOPO, format: { type: "topojson", feature: "countries" } },
+      mark: { type: "geoshape", fill: "#1C2230", stroke: "#0D1117", strokeWidth: 0.5 },
+    },
+    {
+      data: { url: TOPO, format: { type: "topojson", feature: "countries" } },
+      transform: [{
+        lookup: "id",
+        from: { data: { values: perMillionMapData }, key: "id", fields: ["medals_per_million", "country_name"] },
+      }],
+      mark: { type: "geoshape", stroke: "#0D1117", strokeWidth: 0.5 },
+      encoding: {
+        color: {
+          field: "medals_per_million", type: "quantitative",
+          scale: { domain: [0.1, 60], type: "log", range: ["#0E3460", "#1A6BA0", "#2DD4A0", "#F0B429", "#FF6B35"] },
+          legend: { title: "Medals / million", orient: "bottom-right", gradientLength: 120 },
+        },
+        tooltip: [
+          { field: "country_name", title: "Country" },
+          { field: "medals_per_million", title: "Per million", format: ".1f" },
         ],
-        mark: { type: "geoshape", stroke: "#0D1117", strokeWidth: 0.5 },
-        encoding: {
-          color: {
-            field: "total_medals",
-            type: "quantitative",
-            scale: {
-              domain: [1, 2544],
-              type: "log",
-              range: ["#0E4429", "#196F3D", "#2ECC71", "#F0B429", "#FF6B35"],
-            },
-            legend: {
-              title: "Total medals",
-              orient: "bottom-right",
-              gradientLength: 120,
-            },
-          },
-          tooltip: [
-            { field: "NOC", title: "NOC" },
-            { field: "total_medals", title: "Medals" },
-          ],
-        },
       },
-    ],
-  },
-  O,
-);
+    },
+  ],
+}, O);
 
-vegaEmbed(
-  "#map-per-million",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 420,
-    config: CFG,
-    projection: { type: "naturalEarth1" },
-    layer: [
-      {
-        data: { url: TOPO, format: { type: "topojson", feature: "countries" } },
-        mark: {
-          type: "geoshape",
-          fill: "#1C2230",
-          stroke: "#0D1117",
-          strokeWidth: 0.5,
+// ─── CHART 1: Per-million bar ─────────────────────────────────────────────────
+vegaEmbed("#chart-per-million", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 440, config: CFG,
+  data: { values: perMillion },
+  layer: [
+    {
+      mark: { type: "bar", cornerRadiusTopRight: 3, cornerRadiusBottomRight: 3 },
+      encoding: {
+        y: { field: "country_name", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
+        x: { field: "medals_per_million", type: "quantitative", axis: { title: "Medals per million people", grid: true } },
+        color: {
+          condition: { test: "datum.NOC == 'AUS'", value: GREEN },
+          value: "#2A3A4A",
         },
-      },
-      {
-        data: { url: TOPO, format: { type: "topojson", feature: "countries" } },
-        transform: [
-          {
-            lookup: "id",
-            from: {
-              data: { values: perMillionMapData },
-              key: "id",
-              fields: ["medals_per_million", "country_name"],
-            },
-          },
+        tooltip: [
+          { field: "country_name", title: "Country" },
+          { field: "medals_per_million", title: "Per million", format: ".1f" },
+          { field: "total_medals", title: "Total medals" },
         ],
-        mark: { type: "geoshape", stroke: "#0D1117", strokeWidth: 0.5 },
-        encoding: {
-          color: {
-            field: "medals_per_million",
-            type: "quantitative",
-            scale: {
-              domain: [0.1, 60],
-              type: "log",
-              range: ["#0E3460", "#1A6BA0", "#2DD4A0", "#F0B429", "#FF6B35"],
-            },
-            legend: {
-              title: "Medals / million",
-              orient: "bottom-right",
-              gradientLength: 120,
-            },
-          },
-          tooltip: [
-            { field: "country_name", title: "Country" },
-            {
-              field: "medals_per_million",
-              title: "Per million",
-              format: ".1f",
-            },
-          ],
-        },
       },
-    ],
-  },
-  O,
-);
-
-vegaEmbed(
-  "#chart-per-million",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 440,
-    config: CFG,
-    data: { values: perMillion },
-    mark: { type: "bar", cornerRadiusTopRight: 3, cornerRadiusBottomRight: 3 },
-    encoding: {
-      y: {
-        field: "country_name",
-        type: "nominal",
-        sort: "-x",
-        axis: { title: null, labelFontSize: 12 },
-      },
-      x: {
-        field: "medals_per_million",
-        type: "quantitative",
-        axis: { title: "Medals per million people", grid: true },
-      },
-      color: {
-        condition: { test: "datum.NOC == 'AUS'", value: GREEN },
-        value: "#2A3A4A",
-      },
-      tooltip: [
-        { field: "country_name", title: "Country" },
-        { field: "medals_per_million", title: "Per million", format: ".1f" },
-        { field: "total_medals", title: "Total medals" },
-      ],
     },
-  },
-  O,
-);
-
-vegaEmbed(
-  "#chart-trajectory",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 340,
-    config: CFG,
-    data: { values: medalsByYear },
-    mark: { type: "area", opacity: 0.9, line: { strokeWidth: 1 } },
-    encoding: {
-      x: {
-        field: "Year",
-        type: "quantitative",
-        axis: { title: "Year", format: "d", grid: false },
+    // ANNOTATION: label on Australia bar
+    {
+      mark: { type: "text", align: "left", dx: 4, fontSize: 11, fontWeight: 600, color: GREEN },
+      transform: [{ filter: "datum.NOC == 'AUS'" }],
+      encoding: {
+        y: { field: "country_name", type: "nominal", sort: "-x" },
+        x: { field: "medals_per_million", type: "quantitative" },
+        text: { value: "← Australia: 8th globally" },
       },
-      y: {
-        field: "count",
-        type: "quantitative",
-        stack: "zero",
-        axis: { title: "Medal count", grid: true },
-      },
-      color: {
-        field: "Medal",
-        type: "nominal",
-        scale: {
-          domain: ["Gold", "Silver", "Bronze"],
-          range: [GOLD, SILVER, BRONZE],
-        },
-        legend: { title: "Medal type" },
-      },
-      tooltip: [
-        { field: "Year", type: "quantitative" },
-        { field: "Medal" },
-        { field: "count", title: "Count" },
-      ],
     },
-  },
-  O,
-);
+  ],
+}, O);
 
-vegaEmbed(
-  "#chart-rank",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 340,
-    config: CFG,
-    data: { values: ausRank },
-    layer: [
-      {
-        mark: { type: "line", strokeWidth: 2, color: GREEN },
-        encoding: {
-          x: {
-            field: "Year",
-            type: "quantitative",
-            axis: { title: "Year", format: "d", grid: false },
-          },
-          y: {
-            field: "rank",
-            type: "quantitative",
-            scale: { reverse: true },
-            axis: { title: "Medal tally rank (lower = better)", grid: true },
-          },
-        },
+// ─── CHART 2: Medal trajectory stacked area ───────────────────────────────────
+vegaEmbed("#chart-trajectory", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 340, config: CFG,
+  data: { values: medalsByYear },
+  layer: [
+    // ANNOTATION: shaded band for AIS era
+    {
+      mark: { type: "rect", opacity: 0.06, color: GREEN },
+      data: { values: [{ x1: 1981, x2: 2016 }] },
+      encoding: {
+        x: { field: "x1", type: "quantitative" },
+        x2: { field: "x2" },
       },
-      {
-        mark: { type: "point", filled: true, size: 80 },
-        encoding: {
-          x: { field: "Year", type: "quantitative" },
-          y: { field: "rank", type: "quantitative", scale: { reverse: true } },
-          color: {
-            condition: { test: "datum.rank <= 5", value: GOLD },
-            value: GREEN,
-          },
-          tooltip: [
-            { field: "Year", type: "quantitative" },
-            { field: "rank", title: "Rank" },
-            { field: "medals", title: "Medals" },
-          ],
-        },
-      },
-      {
-        mark: { type: "text", dy: -14, fontSize: 11, fontWeight: 600 },
-        encoding: {
-          x: { field: "Year", type: "quantitative" },
-          y: { field: "rank", type: "quantitative", scale: { reverse: true } },
-          text: { field: "rank", type: "quantitative" },
-          color: {
-            condition: { test: "datum.rank<=5", value: GOLD },
-            value: MUTED,
-          },
-          opacity: {
-            condition: {
-              test: "datum.rank<=5||datum.Year==1936||datum.Year==2000",
-              value: 1,
-            },
-            value: 0,
-          },
-        },
-      },
-    ],
-  },
-  O,
-);
-
-vegaEmbed(
-  "#chart-gold-sport",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 380,
-    config: CFG,
-    data: {
-      values: bySport
-        .filter((d) => d.Medal === "Gold")
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 12),
     },
-    mark: { type: "bar", cornerRadiusTopRight: 3, cornerRadiusBottomRight: 3 },
-    encoding: {
-      y: {
-        field: "Sport",
-        type: "nominal",
-        sort: "-x",
-        axis: { title: null, labelFontSize: 12 },
-      },
-      x: {
-        field: "count",
-        type: "quantitative",
-        axis: { title: "Gold medals", grid: true },
-      },
-      color: {
-        condition: { test: "datum.Sport=='Swimming'", value: GOLD },
-        value: "#2A4A3A",
-      },
-      tooltip: [{ field: "Sport" }, { field: "count", title: "Gold medals" }],
-    },
-  },
-  O,
-);
-
-vegaEmbed(
-  "#chart-sport-all",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 380,
-    config: CFG,
-    data: {
-      values: bySport.filter((d) =>
-        [
-          "Swimming",
-          "Athletics",
-          "Cycling",
-          "Rowing",
-          "Sailing",
-          "Equestrianism",
-          "Shooting",
-          "Hockey",
-          "Canoeing",
-          "Diving",
-        ].includes(d.Sport),
-      ),
-    },
-    mark: { type: "bar" },
-    encoding: {
-      y: {
-        field: "Sport",
-        type: "nominal",
-        sort: { field: "count", op: "sum", order: "descending" },
-        axis: { title: null, labelFontSize: 11 },
-      },
-      x: {
-        field: "count",
-        type: "quantitative",
-        stack: "zero",
-        axis: { title: "Medals", grid: true },
-      },
-      color: {
-        field: "Medal",
-        type: "nominal",
-        scale: {
-          domain: ["Gold", "Silver", "Bronze"],
-          range: [GOLD, SILVER, BRONZE],
+    {
+      mark: { type: "area", opacity: 0.9, line: { strokeWidth: 1 } },
+      encoding: {
+        x: { field: "Year", type: "quantitative", axis: { title: "Year", format: "d", grid: false } },
+        y: { field: "count", type: "quantitative", stack: "zero", axis: { title: "Medal count", grid: true } },
+        color: {
+          field: "Medal", type: "nominal",
+          scale: { domain: ["Gold", "Silver", "Bronze"], range: [GOLD, SILVER, BRONZE] },
+          // FIX: was "Medal typ"
+          legend: { title: "Medal type" },
         },
-      },
-      tooltip: [
-        { field: "Sport" },
-        { field: "Medal" },
-        { field: "count", title: "Medals" },
-      ],
-    },
-  },
-  O,
-);
-
-vegaEmbed(
-  "#chart-summer-winter",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 380,
-    config: CFG,
-    data: {
-      values: [
-        { Season: "Summer", total: 506 },
-        { Season: "Winter", total: 6 },
-      ],
-    },
-    layer: [
-      {
-        mark: { type: "arc", innerRadius: 90, outerRadius: 150 },
-        encoding: {
-          theta: { field: "total", type: "quantitative" },
-          color: {
-            field: "Season",
-            type: "nominal",
-            scale: { domain: ["Summer", "Winter"], range: [GREEN, "#2A3A4A"] },
-          },
-          tooltip: [{ field: "Season" }, { field: "total", title: "Medals" }],
-        },
-      },
-      {
-        mark: { type: "text", radius: 175, fontSize: 13, fontWeight: 500 },
-        encoding: {
-          theta: { field: "total", type: "quantitative", stack: true },
-          text: { field: "Season" },
-          color: { value: TEXT },
-        },
-      },
-    ],
-  },
-  O,
-);
-
-vegaEmbed(
-  "#chart-heatmap",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 420,
-    config: CFG,
-    data: { values: heatmapData },
-    mark: { type: "rect", cornerRadius: 2 },
-    encoding: {
-      x: {
-        field: "decade",
-        type: "ordinal",
-        sort: [
-          "1890s",
-          "1900s",
-          "1910s",
-          "1920s",
-          "1930s",
-          "1940s",
-          "1950s",
-          "1960s",
-          "1970s",
-          "1980s",
-          "1990s",
-          "2000s",
-          "2010s",
+        tooltip: [
+          { field: "Year", type: "quantitative" },
+          { field: "Medal" },
+          { field: "count", title: "Count" },
         ],
-        axis: { title: "Decade", labelAngle: -30, labelFontSize: 11 },
       },
-      y: {
-        field: "Sport",
-        type: "nominal",
-        sort: { field: "medal_count", op: "sum", order: "descending" },
-        axis: { title: null, labelFontSize: 11 },
-      },
-      color: {
-        field: "medal_count",
-        type: "quantitative",
-        scale: {
-          range: ["#0E2A1A", "#1A5C35", "#2DD4A0", "#F0B429", "#FF6B35"],
-        },
-        legend: { title: "Medals", gradientLength: 100 },
-      },
-      tooltip: [
-        { field: "Sport" },
-        { field: "decade", title: "Decade" },
-        { field: "medal_count", title: "Medals" },
-      ],
     },
-  },
-  O,
-);
+    // ANNOTATION: Sydney 2000 peak label
+    {
+      mark: { type: "text", align: "center", dy: -10, fontSize: 11, fontWeight: 700, color: GOLD },
+      data: { values: [{ Year: 2000, count: 62, label: "Sydney 2000\n58 medals · Rank 3" }] },
+      encoding: {
+        x: { field: "Year", type: "quantitative" },
+        y: { field: "count", type: "quantitative" },
+        text: { field: "label" },
+      },
+    },
+    // ANNOTATION: AIS era label
+    {
+      mark: { type: "text", align: "left", dx: 4, dy: -8, fontSize: 10, fontStyle: "italic", color: GREEN },
+      data: { values: [{ Year: 1982, count: 58, label: "AIS era begins →" }] },
+      encoding: {
+        x: { field: "Year", type: "quantitative" },
+        y: { field: "count", type: "quantitative" },
+        text: { field: "label" },
+      },
+    },
+  ],
+}, O);
 
-vegaEmbed(
-  "#chart-sydney-scatter",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 400,
-    config: CFG,
-    data: { values: sydneyData },
-    layer: [
-      {
-        mark: {
-          type: "rule",
-          color: "rgba(255,255,255,0.1)",
-          strokeDash: [4, 3],
-        },
-        encoding: {
-          x: { datum: 0 },
-          x2: { datum: 20 },
-          y: { datum: 0 },
-          y2: { datum: 20 },
-        },
+// ─── CHART 3: Rank connected dot plot ─────────────────────────────────────────
+vegaEmbed("#chart-rank", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 340, config: CFG,
+  data: { values: ausRank },
+  layer: [
+    {
+      mark: { type: "line", strokeWidth: 2, color: GREEN },
+      encoding: {
+        x: { field: "Year", type: "quantitative", axis: { title: "Year", format: "d", grid: false } },
+        y: { field: "rank", type: "quantitative", scale: { reverse: true }, axis: { title: "Medal tally rank (lower = better)", grid: true } },
       },
-      {
-        mark: { type: "point", filled: true, size: 140, opacity: 0.9 },
-        encoding: {
-          x: {
-            field: "other_games_avg",
-            type: "quantitative",
-            axis: { title: "Average medals at other Games", grid: true },
-          },
-          y: {
-            field: "sydney_2000",
-            type: "quantitative",
-            axis: { title: "Medals at Sydney 2000", grid: true },
-          },
-          color: {
-            condition: {
-              test: "datum.sydney_2000>datum.other_games_avg",
-              value: GREEN,
-            },
-            value: "#2A3A4A",
-          },
-          tooltip: [
-            { field: "Sport" },
-            { field: "sydney_2000", title: "Sydney 2000" },
-            {
-              field: "other_games_avg",
-              title: "Other Games avg",
-              format: ".1f",
-            },
-          ],
+    },
+    {
+      mark: { type: "point", filled: true, size: 80 },
+      encoding: {
+        x: { field: "Year", type: "quantitative" },
+        y: { field: "rank", type: "quantitative", scale: { reverse: true } },
+        color: {
+          condition: { test: "datum.rank <= 5", value: GOLD },
+          value: GREEN,
         },
-      },
-      {
-        mark: { type: "text", dy: -14, fontSize: 11 },
-        encoding: {
-          x: { field: "other_games_avg", type: "quantitative" },
-          y: { field: "sydney_2000", type: "quantitative" },
-          text: { field: "Sport" },
-          color: { value: MUTED },
-          opacity: {
-            condition: { test: "datum.sydney_2000>=3", value: 1 },
-            value: 0,
-          },
-        },
-      },
-    ],
-  },
-  O,
-);
-
-vegaEmbed(
-  "#map-australia",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 440,
-    config: CFG,
-    projection: { type: "mercator", center: [134, -28], scale: 600 },
-    layer: [
-      {
-        data: {
-          url: "data/STE_2021_AUST_GDA2020.json",
-          format: { type: "topojson", feature: "STE_2021_AUST_GDA2020" },
-        },
-        mark: {
-          type: "geoshape",
-          fill: "#1C2230",
-          stroke: "#0D1117",
-          strokeWidth: 1,
-        },
-      },
-      {
-        data: {
-          url: "data/STE_2021_AUST_GDA2020.json",
-          format: { type: "topojson", feature: "STE_2021_AUST_GDA2020" },
-        },
-        transform: [
-          {
-            lookup: "properties.STE_NAME21",
-            from: {
-              data: { values: stateContributions },
-              key: "state",
-              fields: ["medals"],
-            },
-          },
+        tooltip: [
+          { field: "Year", type: "quantitative" },
+          { field: "rank", title: "Rank" },
+          { field: "medals", title: "Medals" },
         ],
-        mark: { type: "geoshape", stroke: "#0D1117", strokeWidth: 1 },
-        encoding: {
-          color: {
-            field: "medals",
-            type: "quantitative",
-            scale: {
-              domain: [0, 200],
-              range: ["#0E2A40", "#1A5C80", "#2DD4A0", "#F0B429"],
-            },
-            legend: {
-              title: "Estimated medals",
-              orient: "bottom-right",
-              gradientLength: 120,
-            },
-          },
-          tooltip: [
-            { field: "properties.STE_NAME21", title: "State/Territory" },
-            { field: "medals", title: "Est. medals" },
-          ],
-        },
       },
-    ],
-  },
-  O,
-);
-
-vegaEmbed(
-  "#chart-sydney-paris",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 360,
-    config: CFG,
-    data: { values: sydneyParis },
-    mark: { type: "bar", cornerRadiusTopRight: 2 },
-    encoding: {
-      y: {
-        field: "Sport",
-        type: "nominal",
-        sort: { field: "count", op: "sum", order: "descending" },
-        axis: { title: null, labelFontSize: 12 },
-      },
-      x: {
-        field: "count",
-        type: "quantitative",
-        axis: { title: "Medals", grid: true },
-      },
-      color: {
-        field: "games",
-        type: "nominal",
-        scale: { domain: ["Sydney 2000", "Paris 2024"], range: [GOLD, GREEN] },
-        legend: { title: "Games" },
-      },
-      yOffset: { field: "games", type: "nominal" },
-      tooltip: [
-        { field: "Sport" },
-        { field: "games", title: "Games" },
-        { field: "count", title: "Medals" },
-      ],
     },
-  },
-  O,
-);
-
-vegaEmbed(
-  "#chart-paris",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 400,
-    config: CFG,
-    data: {
-      values: parisData
-        .flatMap((d) => [
-          { sport: d.sport, Medal: "Gold", count: d.gold },
-          { sport: d.sport, Medal: "Silver", count: d.silver },
-          { sport: d.sport, Medal: "Bronze", count: d.bronze },
-        ])
-        .filter((d) => d.count > 0),
+    // rank labels for top-5 and notable lows
+    {
+      mark: { type: "text", dy: -14, fontSize: 11, fontWeight: 600 },
+      encoding: {
+        x: { field: "Year", type: "quantitative" },
+        y: { field: "rank", type: "quantitative", scale: { reverse: true } },
+        text: { field: "rank", type: "quantitative" },
+        color: {
+          condition: { test: "datum.rank<=5", value: GOLD },
+          value: MUTED,
+        },
+        opacity: {
+          condition: { test: "datum.rank<=5||datum.Year==1936||datum.Year==2000", value: 1 },
+          value: 0,
+        },
+      },
     },
-    mark: { type: "bar" },
-    encoding: {
-      y: {
-        field: "sport",
-        type: "nominal",
-        sort: { field: "count", op: "sum", order: "descending" },
-        axis: { title: null, labelFontSize: 12 },
+    // ANNOTATION: Melbourne 1956 home games
+    {
+      mark: { type: "text", align: "left", dx: 6, dy: 0, fontSize: 10, fontWeight: 600, color: GOLD },
+      data: { values: [{ Year: 1956, rank: 3, label: "Melbourne\nHome Games" }] },
+      encoding: {
+        x: { field: "Year", type: "quantitative" },
+        y: { field: "rank", type: "quantitative", scale: { reverse: true } },
+        text: { field: "label" },
       },
-      x: {
-        field: "count",
-        type: "quantitative",
-        stack: "zero",
-        axis: { title: "Medals", grid: true },
-      },
-      color: {
-        field: "Medal",
-        type: "nominal",
-        scale: {
-          domain: ["Gold", "Silver", "Bronze"],
-          range: [GOLD, SILVER, BRONZE],
-        },
-      },
-      tooltip: [
-        { field: "sport", title: "Sport" },
-        { field: "Medal" },
-        { field: "count", title: "Medals" },
-      ],
     },
-  },
-  O,
-);
+    // ANNOTATION: Sydney 2000
+    {
+      mark: { type: "text", align: "left", dx: 6, dy: 0, fontSize: 10, fontWeight: 600, color: GOLD },
+      data: { values: [{ Year: 2000, rank: 3, label: "Sydney\nHome Games" }] },
+      encoding: {
+        x: { field: "Year", type: "quantitative" },
+        y: { field: "rank", type: "quantitative", scale: { reverse: true } },
+        text: { field: "label" },
+      },
+    },
+    // ANNOTATION: 1976 low
+    {
+      mark: { type: "text", align: "right", dx: -6, dy: 0, fontSize: 10, fontStyle: "italic", color: MUTED },
+      data: { values: [{ Year: 1976, rank: 20, label: "Post-AIS\nfunding cut" }] },
+      encoding: {
+        x: { field: "Year", type: "quantitative" },
+        y: { field: "rank", type: "quantitative", scale: { reverse: true } },
+        text: { field: "label" },
+      },
+    },
+  ],
+}, O);
 
-vegaEmbed(
-  "#chart-ages",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 400,
-    config: CFG,
-    data: { values: ageStats },
-    layer: [
-      {
-        mark: { type: "rule", color: "rgba(255,255,255,0.15)" },
-        encoding: {
-          x: { field: "decade", type: "ordinal" },
-          y: { field: "min", type: "quantitative" },
-          y2: { field: "max" },
-        },
-      },
-      {
-        mark: { type: "bar", width: 28, cornerRadius: 3 },
-        encoding: {
-          x: {
-            field: "decade",
-            type: "ordinal",
-            axis: { title: "Decade", labelAngle: -30 },
-          },
-          y: {
-            field: "q1",
-            type: "quantitative",
-            axis: { title: "Age", grid: true },
-          },
-          y2: { field: "q3" },
-          color: { value: GREEN },
-          opacity: { value: 0.75 },
-        },
-      },
-      {
-        mark: { type: "tick", color: "#fff", width: 28, thickness: 2 },
-        encoding: {
-          x: { field: "decade", type: "ordinal" },
-          y: { field: "median", type: "quantitative" },
-          tooltip: [
-            { field: "decade" },
-            { field: "median", title: "Median age" },
-            { field: "q1", title: "Q1" },
-            { field: "q3", title: "Q3" },
-          ],
-        },
-      },
-    ],
-    resolve: { scale: { y: "shared" } },
+// ─── CHART 4: Gold medals by sport ───────────────────────────────────────────
+vegaEmbed("#chart-gold-sport", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 380, config: CFG,
+  data: {
+    values: bySport
+      .filter((d) => d.Medal === "Gold")
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 12),
   },
-  O,
-);
+  layer: [
+    {
+      mark: { type: "bar", cornerRadiusTopRight: 3, cornerRadiusBottomRight: 3 },
+      encoding: {
+        y: { field: "Sport", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
+        x: { field: "count", type: "quantitative", axis: { title: "Gold medals", grid: true } },
+        color: {
+          condition: { test: "datum.Sport=='Swimming'", value: GOLD },
+          value: "#2A4A3A",
+        },
+        tooltip: [{ field: "Sport" }, { field: "count", title: "Gold medals" }],
+      },
+    },
+    // ANNOTATION: Swimming dominance label
+    {
+      mark: { type: "text", align: "left", dx: 4, fontSize: 11, fontWeight: 700, color: GOLD },
+      transform: [{ filter: "datum.Sport == 'Swimming'" }],
+      encoding: {
+        y: { field: "Sport", type: "nominal", sort: "-x" },
+        x: { field: "count", type: "quantitative" },
+        text: { value: "60 golds — more than next two sports combined" },
+      },
+    },
+  ],
+}, O);
 
-vegaEmbed(
-  "#map-host-cities",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 320,
-    config: CFG,
-    data: { values: hostCities },
-    layer: [
-      {
-        mark: { type: "rule", color: "rgba(255,255,255,0.06)", strokeWidth: 1 },
-        encoding: { x: { field: "year", type: "quantitative" } },
-      },
-      {
-        mark: {
-          type: "line",
-          strokeWidth: 1.5,
-          color: "rgba(45,212,160,0.25)",
-          strokeDash: [4, 3],
-        },
-        encoding: {
-          x: { field: "year", type: "quantitative" },
-          y: { field: "aus_medals", type: "quantitative" },
-        },
-      },
-      {
-        mark: { type: "circle", opacity: 0.9 },
-        encoding: {
-          x: {
-            field: "year",
-            type: "quantitative",
-            axis: {
-              title: null,
-              format: "d",
-              labelFontSize: 12,
-              tickCount: 12,
-              grid: false,
-            },
-          },
-          y: {
-            field: "aus_medals",
-            type: "quantitative",
-            axis: { title: "Australia medals", grid: true },
-          },
-          size: {
-            field: "aus_medals",
-            type: "quantitative",
-            scale: { range: [80, 2200] },
-            legend: null,
-          },
-          color: {
-            condition: { test: "datum.host==true", value: GOLD },
-            value: GREEN,
-          },
-          tooltip: [
-            { field: "city", title: "Host city" },
-            { field: "year", title: "Year" },
-            { field: "aus_medals", title: "Aus medals" },
-          ],
-        },
-      },
-      {
-        mark: { type: "text", dy: -18, fontSize: 11, fontWeight: 600 },
-        encoding: {
-          x: { field: "year", type: "quantitative" },
-          y: { field: "aus_medals", type: "quantitative" },
-          text: { field: "city" },
-          color: {
-            condition: { test: "datum.host==true", value: GOLD },
-            value: MUTED,
-          },
-          opacity: {
-            condition: {
-              test: "datum.aus_medals>=40||datum.host==true",
-              value: 1,
-            },
-            value: 0,
-          },
-        },
-      },
-      {
-        mark: { type: "text", dy: 5, dx: 26, fontSize: 10 },
-        encoding: {
-          x: { field: "year", type: "quantitative" },
-          y: { field: "aus_medals", type: "quantitative" },
-          text: { field: "aus_medals", type: "quantitative" },
-          color: { value: TEXT },
-          opacity: {
-            condition: {
-              test: "datum.aus_medals>=40||datum.host==true",
-              value: 1,
-            },
-            value: 0,
-          },
-        },
-      },
-    ],
+// ─── CHART 5: All medals by sport stacked bar ────────────────────────────────
+vegaEmbed("#chart-sport-all", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 380, config: CFG,
+  data: {
+    values: bySport.filter((d) =>
+      ["Swimming","Athletics","Cycling","Rowing","Sailing","Equestrianism","Shooting","Hockey","Canoeing","Diving"].includes(d.Sport)
+    ),
   },
-  O,
-);
-// Heatmap embed (filled zeros)
+  mark: { type: "bar" },
+  encoding: {
+    y: {
+      field: "Sport", type: "nominal",
+      sort: { field: "count", op: "sum", order: "descending" },
+      axis: { title: null, labelFontSize: 11 },
+    },
+    x: { field: "count", type: "quantitative", stack: "zero", axis: { title: "Medals", grid: true } },
+    color: {
+      field: "Medal", type: "nominal",
+      scale: { domain: ["Gold", "Silver", "Bronze"], range: [GOLD, SILVER, BRONZE] },
+    },
+    tooltip: [{ field: "Sport" }, { field: "Medal" }, { field: "count", title: "Medals" }],
+  },
+}, O);
 
-vegaEmbed(
-  "#chart-heatmap",
-  {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-    width: "container",
-    height: 420,
-    config: CFG,
-    data: { values: heatmapFilled },
-    mark: { type: "rect", cornerRadius: 2, stroke: "#0D1117", strokeWidth: 1 },
-    encoding: {
-      x: {
-        field: "decade",
-        type: "ordinal",
-        sort: [
-          "1890s",
-          "1900s",
-          "1910s",
-          "1920s",
-          "1930s",
-          "1940s",
-          "1950s",
-          "1960s",
-          "1970s",
-          "1980s",
-          "1990s",
-          "2000s",
-          "2010s",
+// ─── CHART 6: Summer vs Winter donut ─────────────────────────────────────────
+vegaEmbed("#chart-summer-winter", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 380, config: CFG,
+  data: { values: [{ Season: "Summer", total: 506 }, { Season: "Winter", total: 6 }] },
+  layer: [
+    {
+      mark: { type: "arc", innerRadius: 90, outerRadius: 150 },
+      encoding: {
+        theta: { field: "total", type: "quantitative" },
+        color: {
+          field: "Season", type: "nominal",
+          // FIX: was "Summe" truncation — full strings + labelLimit in CFG
+          scale: { domain: ["Summer", "Winter"], range: [GREEN, "#2A3A4A"] },
+          legend: { title: "Season" },
+        },
+        tooltip: [{ field: "Season" }, { field: "total", title: "Medals" }],
+      },
+    },
+    {
+      mark: { type: "text", radius: 175, fontSize: 13, fontWeight: 500 },
+      encoding: {
+        theta: { field: "total", type: "quantitative", stack: true },
+        text: { field: "Season" },
+        color: { value: TEXT },
+      },
+    },
+    // ANNOTATION: centre label showing percentage
+    {
+      mark: { type: "text", fontSize: 22, fontWeight: 700, color: GREEN, dy: -10 },
+      data: { values: [{ label: "98.8%" }] },
+      encoding: { text: { field: "label" } },
+    },
+    {
+      mark: { type: "text", fontSize: 11, color: MUTED, dy: 14 },
+      data: { values: [{ label: "Summer medals" }] },
+      encoding: { text: { field: "label" } },
+    },
+  ],
+}, O);
+
+// ─── CHART 7: Heatmap ─────────────────────────────────────────────────────────
+vegaEmbed("#chart-heatmap", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 420, config: CFG,
+  data: { values: heatmapFilled },
+  mark: { type: "rect", cornerRadius: 2, stroke: "#0D1117", strokeWidth: 1 },
+  encoding: {
+    x: {
+      field: "decade", type: "ordinal",
+      sort: ["1890s","1900s","1910s","1920s","1930s","1940s","1950s","1960s","1970s","1980s","1990s","2000s","2010s"],
+      axis: { title: "Decade", labelAngle: -30, labelFontSize: 11 },
+    },
+    y: {
+      field: "Sport", type: "nominal",
+      sort: { field: "medal_count", op: "sum", order: "descending" },
+      axis: { title: null, labelFontSize: 11 },
+    },
+    color: {
+      condition: { test: "datum.medal_count == 0", value: "#113f33" },
+      field: "medal_count", type: "quantitative",
+      scale: {
+        type: "threshold",
+        domain: [1, 3, 6, 12, 24],
+        range: ["#1f6b44","#2aa86a","#4fe0a0","#f0c34a","#ff9a5f","#ff6b35"],
+      },
+      legend: { title: "Medals", orient: "right" },
+    },
+    tooltip: [{ field: "Sport" }, { field: "decade", title: "Decade" }, { field: "medal_count", title: "Medals" }],
+  },
+}, O);
+
+// ─── CHART 8: Sydney scatter ──────────────────────────────────────────────────
+vegaEmbed("#chart-sydney-scatter", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 400, config: CFG,
+  data: { values: sydneyData },
+  layer: [
+    // diagonal reference line
+    {
+      mark: { type: "rule", color: "rgba(255,255,255,0.1)", strokeDash: [4, 3] },
+      encoding: { x: { datum: 0 }, x2: { datum: 20 }, y: { datum: 0 }, y2: { datum: 20 } },
+    },
+    // ANNOTATION: "above line = home boost" label on the diagonal
+    {
+      mark: { type: "text", align: "left", fontSize: 10, fontStyle: "italic", color: MUTED },
+      data: { values: [{ x: 10.5, y: 9.5, label: "↑ Outperformed at home" }] },
+      encoding: {
+        x: { field: "x", type: "quantitative" },
+        y: { field: "y", type: "quantitative" },
+        text: { field: "label" },
+      },
+    },
+    {
+      mark: { type: "text", align: "right", fontSize: 10, fontStyle: "italic", color: MUTED },
+      data: { values: [{ x: 9.5, y: 10.5, label: "↓ Underperformed at home" }] },
+      encoding: {
+        x: { field: "x", type: "quantitative" },
+        y: { field: "y", type: "quantitative" },
+        text: { field: "label" },
+      },
+    },
+    {
+      mark: { type: "point", filled: true, size: 140, opacity: 0.9 },
+      encoding: {
+        x: { field: "other_games_avg", type: "quantitative", axis: { title: "Average medals at other Games", grid: true } },
+        y: { field: "sydney_2000", type: "quantitative", axis: { title: "Medals at Sydney 2000", grid: true } },
+        color: {
+          condition: { test: "datum.sydney_2000>datum.other_games_avg", value: GREEN },
+          value: "#2A3A4A",
+        },
+        tooltip: [
+          { field: "Sport" },
+          { field: "sydney_2000", title: "Sydney 2000" },
+          { field: "other_games_avg", title: "Other Games avg", format: ".1f" },
         ],
-        axis: { title: "Decade", labelAngle: -30, labelFontSize: 11 },
       },
-      y: {
-        field: "Sport",
-        type: "nominal",
-        sort: { field: "medal_count", op: "sum", order: "descending" },
-        axis: { title: null, labelFontSize: 11 },
-      },
-      color: {
-        condition: {
-          test: "datum.medal_count == 0",
-          value: "#113f33"
-        },
-        field: "medal_count",
-        type: "quantitative",
-        scale: {
-          type: "threshold",
-          domain: [1, 3, 6, 12, 24],
-          range: [
-            "#1f6b44",
-            "#2aa86a",
-            "#4fe0a0",
-            "#f0c34a",
-            "#ff9a5f",
-            "#ff6b35"
-          ]
-        },
-        legend: { title: "Medals", orient: "right" }
-      },
-      tooltip: [
-        { field: "Sport" },
-        { field: "decade", title: "Decade" },
-        { field: "medal_count", title: "Medals" },
-      ],
     },
+    {
+      mark: { type: "text", dy: -14, fontSize: 11 },
+      encoding: {
+        x: { field: "other_games_avg", type: "quantitative" },
+        y: { field: "sydney_2000", type: "quantitative" },
+        text: { field: "Sport" },
+        color: { value: MUTED },
+        opacity: { condition: { test: "datum.sydney_2000>=3", value: 1 }, value: 0 },
+      },
+    },
+    // ANNOTATION: Swimming outlier callout
+    {
+      mark: { type: "text", align: "left", dx: 8, dy: 4, fontSize: 11, fontWeight: 700, color: GOLD },
+      data: { values: [{ x: 7.29, y: 18, label: "Swimming — 2.5× avg" }] },
+      encoding: {
+        x: { field: "x", type: "quantitative" },
+        y: { field: "y", type: "quantitative" },
+        text: { field: "label" },
+      },
+    },
+  ],
+}, O);
+
+// ─── MAP 3: Australia state choropleth ────────────────────────────────────────
+vegaEmbed("#map-australia", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 440, config: CFG,
+  projection: { type: "mercator", center: [134, -28], scale: 600 },
+  layer: [
+    {
+      data: {
+        url: "data/STE_2021_AUST_GDA2020.json",
+        format: { type: "topojson", feature: "STE_2021_AUST_GDA2020" },
+      },
+      mark: { type: "geoshape", fill: "#1C2230", stroke: "#0D1117", strokeWidth: 1 },
+    },
+    {
+      data: {
+        url: "data/STE_2021_AUST_GDA2020.json",
+        format: { type: "topojson", feature: "STE_2021_AUST_GDA2020" },
+      },
+      transform: [{
+        lookup: "properties.STE_NAME21",
+        from: { data: { values: stateContributions }, key: "state", fields: ["medals"] },
+      }],
+      mark: { type: "geoshape", stroke: "#0D1117", strokeWidth: 1 },
+      encoding: {
+        color: {
+          field: "medals", type: "quantitative",
+          scale: { domain: [0, 200], range: ["#0E2A40", "#1A5C80", "#2DD4A0", "#F0B429"] },
+          legend: { title: "Estimated medals", orient: "bottom-right", gradientLength: 120 },
+        },
+        tooltip: [
+          { field: "properties.STE_NAME21", title: "State/Territory" },
+          { field: "medals", title: "Est. medals" },
+        ],
+      },
+    },
+  ],
+}, O);
+
+// ─── CHART 9: Sydney vs Paris grouped bar ────────────────────────────────────
+vegaEmbed("#chart-sydney-paris", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 360, config: CFG,
+  data: { values: sydneyParis },
+  layer: [
+    {
+      mark: { type: "bar", cornerRadiusTopRight: 2 },
+      encoding: {
+        y: {
+          field: "Sport", type: "nominal",
+          sort: { field: "count", op: "sum", order: "descending" },
+          axis: { title: null, labelFontSize: 12 },
+        },
+        x: { field: "count", type: "quantitative", axis: { title: "Medals", grid: true } },
+        color: {
+          field: "games", type: "nominal",
+          scale: { domain: ["Sydney 2000", "Paris 2024"], range: [GOLD, GREEN] },
+          legend: { title: "Games" },
+        },
+        yOffset: { field: "games", type: "nominal" },
+        tooltip: [{ field: "Sport" }, { field: "games", title: "Games" }, { field: "count", title: "Medals" }],
+      },
+    },
+    // ANNOTATION: Athletics jump callout
+    {
+      mark: { type: "text", align: "left", dx: 4, fontSize: 10, fontWeight: 600, color: GREEN },
+      data: { values: [{ Sport: "Athletics", games: "Paris 2024", count: 7, label: "+4 vs Sydney" }] },
+      encoding: {
+        y: { field: "Sport", type: "nominal", sort: { field: "count", op: "sum", order: "descending" } },
+        yOffset: { field: "games", type: "nominal" },
+        x: { field: "count", type: "quantitative" },
+        text: { field: "label" },
+      },
+    },
+  ],
+}, O);
+
+// ─── CHART 10: Paris stacked bar ─────────────────────────────────────────────
+vegaEmbed("#chart-paris", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 400, config: CFG,
+  data: {
+    values: parisData
+      .flatMap((d) => [
+        { sport: d.sport, Medal: "Gold", count: d.gold },
+        { sport: d.sport, Medal: "Silver", count: d.silver },
+        { sport: d.sport, Medal: "Bronze", count: d.bronze },
+      ])
+      .filter((d) => d.count > 0),
   },
-  O,
-);
+  mark: { type: "bar" },
+  encoding: {
+    y: {
+      field: "sport", type: "nominal",
+      sort: { field: "count", op: "sum", order: "descending" },
+      axis: { title: null, labelFontSize: 12 },
+    },
+    x: { field: "count", type: "quantitative", stack: "zero", axis: { title: "Medals", grid: true } },
+    color: {
+      field: "Medal", type: "nominal",
+      scale: { domain: ["Gold", "Silver", "Bronze"], range: [GOLD, SILVER, BRONZE] },
+    },
+    tooltip: [{ field: "sport", title: "Sport" }, { field: "Medal" }, { field: "count", title: "Medals" }],
+  },
+}, O);
+
+// ─── CHART 11: Age box plot ───────────────────────────────────────────────────
+vegaEmbed("#chart-ages", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 400, config: CFG,
+  data: { values: ageStats },
+  layer: [
+    {
+      mark: { type: "rule", color: "rgba(255,255,255,0.15)" },
+      encoding: {
+        x: { field: "decade", type: "ordinal" },
+        y: { field: "min", type: "quantitative" },
+        y2: { field: "max" },
+      },
+    },
+    {
+      mark: { type: "bar", width: 28, cornerRadius: 3 },
+      encoding: {
+        x: { field: "decade", type: "ordinal", axis: { title: "Decade", labelAngle: -30 } },
+        y: { field: "q1", type: "quantitative", axis: { title: "Age", grid: true } },
+        y2: { field: "q3" },
+        color: { value: GREEN },
+        opacity: { value: 0.75 },
+      },
+    },
+    {
+      mark: { type: "tick", color: "#fff", width: 28, thickness: 2 },
+      encoding: {
+        x: { field: "decade", type: "ordinal" },
+        y: { field: "median", type: "quantitative" },
+        tooltip: [
+          { field: "decade" },
+          { field: "median", title: "Median age" },
+          { field: "q1", title: "Q1" },
+          { field: "q3", title: "Q3" },
+        ],
+      },
+    },
+    // ANNOTATION: stable median callout
+    {
+      mark: { type: "text", align: "left", dx: 4, fontSize: 10, fontStyle: "italic", color: MUTED },
+      data: { values: [{ decade: "2010s", median: 24, label: "← Median ~23 across all eras" }] },
+      encoding: {
+        x: { field: "decade", type: "ordinal" },
+        y: { field: "median", type: "quantitative" },
+        text: { field: "label" },
+      },
+    },
+  ],
+  resolve: { scale: { y: "shared" } },
+}, O);
+
+// ─── MAP 4 / CHART: Home Games advantage — custom annotated bubble+band chart ──
+// This is a custom idiom combining: background rect bands (home Games era),
+// a trend line, sized+coloured bubbles, city labels, and medal count labels.
+// The home-advantage "surge bands" are derived data (pre/post home Games windows).
+const homeWindowData = [
+  // Sydney window: shows the rise leading into and after Sydney
+  { x1: 1996, x2: 2008, label: "Sydney era boost" },
+];
+
+vegaEmbed("#map-host-cities", {
+  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+  width: "container", height: 340, config: CFG,
+  layer: [
+    // Background band: Sydney-era surge (1996–2008)
+    {
+      data: { values: [{ x1: 1996, x2: 2009 }] },
+      mark: { type: "rect", opacity: 0.07, color: GOLD },
+      encoding: {
+        x: { field: "x1", type: "quantitative" },
+        x2: { field: "x2" },
+      },
+    },
+    // Background band: Brisbane anticipation (2024–2032)
+    {
+      data: { values: [{ x1: 2024, x2: 2033 }] },
+      mark: { type: "rect", opacity: 0.07, color: GREEN },
+      encoding: {
+        x: { field: "x1", type: "quantitative" },
+        x2: { field: "x2" },
+      },
+    },
+    // Trend line
+    {
+      data: { values: hostCities },
+      mark: { type: "line", strokeWidth: 1.5, color: "rgba(45,212,160,0.25)", strokeDash: [4, 3] },
+      encoding: {
+        x: { field: "year", type: "quantitative" },
+        y: { field: "aus_medals", type: "quantitative" },
+      },
+    },
+    // Bubbles
+    {
+      data: { values: hostCities },
+      mark: { type: "circle", opacity: 0.9 },
+      encoding: {
+        x: {
+          field: "year", type: "quantitative",
+          axis: { title: null, format: "d", labelFontSize: 12, tickCount: 12, grid: false },
+        },
+        y: {
+          field: "aus_medals", type: "quantitative",
+          axis: { title: "Australia medals", grid: true },
+        },
+        size: {
+          field: "aus_medals", type: "quantitative",
+          scale: { range: [80, 2200] }, legend: null,
+        },
+        color: {
+          condition: { test: "datum.host==true", value: GOLD },
+          value: GREEN,
+        },
+        tooltip: [
+          { field: "city", title: "Host city" },
+          { field: "year", title: "Year" },
+          { field: "aus_medals", title: "Aus medals" },
+        ],
+      },
+    },
+    // City labels
+    {
+      data: { values: hostCities },
+      mark: { type: "text", dy: -18, fontSize: 11, fontWeight: 600 },
+      encoding: {
+        x: { field: "year", type: "quantitative" },
+        y: { field: "aus_medals", type: "quantitative" },
+        text: { field: "city" },
+        color: {
+          condition: { test: "datum.host==true", value: GOLD },
+          value: MUTED,
+        },
+        opacity: {
+          condition: { test: "datum.aus_medals>=40||datum.host==true", value: 1 },
+          value: 0,
+        },
+      },
+    },
+    // Medal count labels
+    {
+      data: { values: hostCities },
+      mark: { type: "text", dy: 5, dx: 26, fontSize: 10 },
+      encoding: {
+        x: { field: "year", type: "quantitative" },
+        y: { field: "aus_medals", type: "quantitative" },
+        text: { field: "aus_medals", type: "quantitative" },
+        color: { value: TEXT },
+        opacity: {
+          condition: { test: "datum.aus_medals>=40||datum.host==true", value: 1 },
+          value: 0,
+        },
+      },
+    },
+    // ANNOTATION: "Sydney era" band label
+    {
+      data: { values: [{ year: 2002, aus_medals: 60, label: "Sydney era ↑" }] },
+      mark: { type: "text", fontSize: 10, fontStyle: "italic", fontWeight: 600, color: GOLD },
+      encoding: {
+        x: { field: "year", type: "quantitative" },
+        y: { field: "aus_medals", type: "quantitative" },
+        text: { field: "label" },
+      },
+    },
+    // ANNOTATION: "Brisbane window" band label
+    {
+      data: { values: [{ year: 2028, aus_medals: 60, label: "Brisbane\nwindow" }] },
+      mark: { type: "text", fontSize: 10, fontStyle: "italic", fontWeight: 600, color: GREEN },
+      encoding: {
+        x: { field: "year", type: "quantitative" },
+        y: { field: "aus_medals", type: "quantitative" },
+        text: { field: "label" },
+      },
+    },
+    // ANNOTATION: Brisbane 2032 "?" label since medals = 0
+    {
+      data: { values: [{ year: 2032, aus_medals: 4, label: "Brisbane 2032\n— next home Games" }] },
+      mark: { type: "text", fontSize: 10, fontWeight: 700, color: GOLD, dy: -8 },
+      encoding: {
+        x: { field: "year", type: "quantitative" },
+        y: { field: "aus_medals", type: "quantitative" },
+        text: { field: "label" },
+      },
+    },
+  ],
+}, O);
