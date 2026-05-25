@@ -1,4 +1,3 @@
-
 const BG2 = "#161B22",
   GOLD = "#F0B429",
   SILVER = "#8B98A8",
@@ -879,14 +878,14 @@ vegaEmbed("#chart-rank", {
  
 vegaEmbed("#chart-gold-sport", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: "container", height: 600, config: CFG,
-  data: { values: bySport },
+  width: "container", height: 660, config: CFG,
+  data: { values: bySport.filter(d => d.Medal === "Gold") },
   layer: [
     // Stem: rule from 0 to count
     {
       mark: { type: "rule", strokeWidth: 2.5, opacity: 0.7 },
       encoding: {
-        y: { field: "Sport", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
+        y: { field: "Sport", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 13 } },
         x: { field: "count", type: "quantitative", axis: { title: "Gold medals", grid: true }, scale: { domainMin: 0 } },
         x2: { datum: 0 },
         color: { condition: { test: "datum.Sport=='Swimming'", value: GOLD }, value: "#3A5060" },
@@ -894,7 +893,7 @@ vegaEmbed("#chart-gold-sport", {
     },
     // Head: filled circle at value
     {
-      mark: { type: "point", filled: true, size: 160, opacity: 1 },
+      mark: { type: "point", filled: true, size: 180, opacity: 1 },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: "-x" },
         x: { field: "count", type: "quantitative" },
@@ -904,12 +903,12 @@ vegaEmbed("#chart-gold-sport", {
     },
     // Count labels
     {
-      mark: { type: "text", dx: 14, fontSize: 11, fontWeight: 600, align: "left" },
+      mark: { type: "text", dx: 16, fontSize: 12, fontWeight: 700, align: "left" },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: "-x" },
         x: { field: "count", type: "quantitative" },
         text: { field: "count", type: "quantitative" },
-        color: { condition: { test: "datum.Sport=='Swimming'", value: GOLD }, value: MUTED },
+        color: { condition: { test: "datum.Sport=='Swimming'", value: GOLD }, value: TEXT },
       },
     },
   ],
@@ -1077,13 +1076,20 @@ vegaEmbed("#chart-slope", {
         },
       },
     },
-    // Sport name labels at rightmost era (Paris 2024)
+    // Sport name labels at rightmost era (Paris 2024) — dy offsets separate overlapping lines
     {
-      mark: { type: "text", align: "left", dx: 8, fontSize: 11, fontWeight: 600 },
-      transform: [{ filter: "datum.era == 'Paris 2024'" }],
+      mark: { type: "text", align: "left", dx: 10, fontSize: 12, fontWeight: 700 },
+      transform: [
+        { filter: "datum.era == 'Paris 2024'" },
+        {
+          calculate: "datum.Sport == 'Swimming' ? -10 : datum.Sport == 'Athletics' ? 0 : datum.Sport == 'Cycling' ? 12 : datum.Sport == 'Rowing' ? 24 : 36",
+          as: "labelDy"
+        },
+      ],
       encoding: {
         x: { field: "era", type: "ordinal", sort: ["1970s","Sydney 2000","Post-Sydney","Paris 2024"] },
         y: { field: "share", type: "quantitative" },
+        dy: { field: "labelDy", type: "quantitative" },
         text: { field: "Sport", type: "nominal" },
         color: {
           field: "Sport", type: "nominal",
@@ -1118,7 +1124,7 @@ vegaEmbed("#chart-slope", {
 // ════════════════════════════════════════════════════════════════════════════
 vegaEmbed("#chart-diverging", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: "container", height: 560, config: CFG,
+  width: "container", height: 580, padding: { right: 20 }, config: CFG,
   data: { values: divergingData },
   layer: [
     // Zero reference line
@@ -1133,7 +1139,7 @@ vegaEmbed("#chart-diverging", {
         y: {
           field: "Sport", type: "nominal",
           sort: { field: "delta", order: "descending" },
-          axis: { title: null, labelFontSize: 12 },
+          axis: { title: null, labelFontSize: 13 },
         },
         x: {
           field: "delta", type: "quantitative",
@@ -1148,21 +1154,21 @@ vegaEmbed("#chart-diverging", {
         ],
       },
     },
-    // Delta value labels at bar tips
+    // Delta value labels — placed OUTSIDE bars with bigger font and more offset
     {
-      mark: { type: "text", fontSize: 11, fontWeight: 600 },
+      mark: { type: "text", fontSize: 12, fontWeight: 700 },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: { field: "delta", order: "descending" } },
         x: { field: "delta", type: "quantitative" },
         text: { field: "delta", type: "quantitative", format: "+.1f" },
-        color: { condition: { test: "datum.delta >= 0", value: GREEN }, value: BRONZE },
+        color: { value: TEXT },
         align: { condition: { test: "datum.delta >= 0", value: "left" }, value: "right" },
-        dx: { condition: { test: "datum.delta >= 0", value: 6 }, value: -6 },
+        dx: { condition: { test: "datum.delta >= 0", value: 8 }, value: -8 },
       },
     },
-    // Annotation for the largest surge
+    // Annotation for the largest surge — placed below Swimming bar
     {
-      mark: { type: "text", fontSize: 10, fontStyle: "italic", align: "left", dx: 14, dy: 0 },
+      mark: { type: "text", fontSize: 10, fontStyle: "italic", align: "left", dx: 8, dy: 12 },
       data: { values: [{ Sport: "Swimming", delta: 10.71, note: "Largest single-sport home-Games surge" }] },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: { field: "delta", order: "descending" } },
@@ -1419,7 +1425,7 @@ vegaEmbed(
       },
       // Actual medal count label, offset from dot
       {
-        mark: { type: "text", fontSize: 11, fontWeight: 700 },
+        mark: { type: "text", fontSize: 12, fontWeight: 700 },
         encoding: {
           y: {
             field: "city",
@@ -1433,13 +1439,10 @@ vegaEmbed(
             value: "right",
           },
           dx: {
-            condition: { test: "datum.delta >= 0", value: 10 },
-            value: -10,
+            condition: { test: "datum.delta >= 0", value: 16 },
+            value: -16,
           },
-          color: {
-            condition: { test: "datum.host == true", value: GOLD },
-            value: TEXT,
-          },
+          color: { value: TEXT },
         },
       },
       // Year label pinned to the far left
