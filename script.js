@@ -1205,63 +1205,133 @@ vegaEmbed("#chart-ages", {
 // Labels only shown for medals ≥ 40 or home Games to avoid clutter
 // City and count labels given different vertical offsets to prevent overlap
 // ════════════════════════════════════════════════════════════════════════════
-vegaEmbed("#map-host-cities", {
-  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: "container", height: 340, config: CFG,
-  data: { values: hostCities },
-  layer: [
-    // Subtle vertical rules
-    {
-      mark: { type: "rule", color: "rgba(255,255,255,0.04)", strokeWidth: 1 },
-      encoding: { x: { field: "year", type: "quantitative" } },
+// ── DIVERGING DOT PLOT: Australia's medal haul vs Rio 2016 baseline ──────────
+// Each Games shown as a horizontal dot. Stem extends from zero (= Rio 2016 = 29).
+// Rightward = better than Rio; leftward = worse. Sydney 2000 and home Games in gold.
+vegaEmbed(
+  "#map-host-cities",
+  {
+    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+    width: "container",
+    height: 380,
+    config: CFG,
+    data: {
+      values: hostCities.filter(d => d.year !== 2032),
     },
-    // Trend connector
-    {
-      mark: { type: "line", strokeWidth: 1.5, color: "rgba(45,212,160,0.2)", strokeDash: [4,3] },
-      encoding: {
-        x: { field: "year", type: "quantitative" },
-        y: { field: "aus_medals", type: "quantitative" },
+    transform: [
+      { calculate: "datum.aus_medals - 29", as: "delta" },
+    ],
+    layer: [
+      // Zero baseline (Rio 2016 = 29 medals)
+      {
+        mark: { type: "rule", color: "rgba(255,255,255,0.3)", strokeWidth: 1.5 },
+        encoding: { x: { datum: 0 } },
       },
-    },
-    // Bubbles
-    {
-      mark: { type: "circle", opacity: 0.9 },
-      encoding: {
-        x: {
-          field: "year", type: "quantitative",
-          axis: { title: null, format: "d", labelFontSize: 12, tickCount: 12, grid: false },
+      // Positive half shading
+      {
+        mark: { type: "rect", opacity: 0.04, color: GREEN },
+        encoding: {
+          x: { datum: 0 },
+          x2: { datum: 32 },
+          y: { value: 0 },
+          y2: { value: 380 },
         },
-        y: { field: "aus_medals", type: "quantitative", axis: { title: "Australia medals", grid: true } },
-        size: { field: "aus_medals", type: "quantitative", scale: { range: [80,2200] }, legend: null },
-        color: { condition: { test: "datum.host==true", value: GOLD }, value: GREEN },
-        tooltip: [
-          { field: "city", title: "Host city" },
-          { field: "year", title: "Year" },
-          { field: "aus_medals", title: "Aus medals" },
-        ],
       },
-    },
-    // City name labels above bubble
-    {
-      mark: { type: "text", dy: -20, fontSize: 11, fontWeight: 600 },
-      encoding: {
-        x: { field: "year", type: "quantitative" },
-        y: { field: "aus_medals", type: "quantitative" },
-        text: { field: "city" },
-        color: { condition: { test: "datum.host==true", value: GOLD }, value: MUTED },
-        opacity: { condition: { test: "datum.aus_medals>=40||datum.host==true", value: 1 }, value: 0 },
+      // Stem: rule from 0 to delta
+      {
+        mark: { type: "rule", strokeWidth: 2.5, opacity: 0.6 },
+        encoding: {
+          y: {
+            field: "city",
+            type: "nominal",
+            sort: { field: "year", order: "ascending" },
+            axis: { title: null, labelFontSize: 12, labelFontWeight: 500 },
+          },
+          x: { datum: 0 },
+          x2: { field: "delta", type: "quantitative" },
+          color: {
+            condition: { test: "datum.host == true", value: GOLD },
+            value: GREEN,
+          },
+        },
       },
-    },
-    // Medal count labels — placed to the right of bubble to avoid city label
-    {
-      mark: { type: "text", dy: -5, dx: 30, fontSize: 10, fontWeight: 400 },
-      encoding: {
-        x: { field: "year", type: "quantitative" },
-        y: { field: "aus_medals", type: "quantitative" },
-        text: { field: "aus_medals", type: "quantitative" },
-        color: { value: TEXT },
-        opacity: { condition: { test: "datum.aus_medals>=40||datum.host==true", value: 1 }, value: 0 },
+      // Head: filled dot at delta
+      {
+        mark: { type: "point", filled: true, size: 180, opacity: 1 },
+        encoding: {
+          y: {
+            field: "city",
+            type: "nominal",
+            sort: { field: "year", order: "ascending" },
+          },
+          x: {
+            field: "delta",
+            type: "quantitative",
+            axis: {
+              title: "Medals won  (baseline = Rio 2016, 29 medals)",
+              grid: true,
+              format: "+d",
+              labelFontSize: 11,
+            },
+          },
+          color: {
+            condition: { test: "datum.host == true", value: GOLD },
+            value: GREEN,
+          },
+          tooltip: [
+            { field: "city", title: "Host city" },
+            { field: "year", title: "Year", format: "d" },
+            { field: "aus_medals", title: "Medals won" },
+            { field: "delta", title: "vs Rio 2016", format: "+d" },
+          ],
+        },
       },
-    },
-  ],
-}, O);
+      // Actual medal count label, offset from dot
+      {
+        mark: { type: "text", fontSize: 11, fontWeight: 700 },
+        encoding: {
+          y: {
+            field: "city",
+            type: "nominal",
+            sort: { field: "year", order: "ascending" },
+          },
+          x: { field: "delta", type: "quantitative" },
+          text: { field: "aus_medals", type: "quantitative" },
+          align: {
+            condition: { test: "datum.delta >= 0", value: "left" },
+            value: "right",
+          },
+          dx: {
+            condition: { test: "datum.delta >= 0", value: 10 },
+            value: -10,
+          },
+          color: {
+            condition: { test: "datum.host == true", value: GOLD },
+            value: TEXT,
+          },
+        },
+      },
+      // Year label pinned to the far left
+      {
+        mark: {
+          type: "text",
+          align: "right",
+          dx: -6,
+          fontSize: 10,
+          fontStyle: "italic",
+        },
+        encoding: {
+          y: {
+            field: "city",
+            type: "nominal",
+            sort: { field: "year", order: "ascending" },
+          },
+          x: { datum: -22 },
+          text: { field: "year", type: "quantitative", format: "d" },
+          color: { value: MUTED },
+        },
+      },
+    ],
+  },
+  O,
+);
