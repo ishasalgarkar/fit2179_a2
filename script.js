@@ -1076,30 +1076,9 @@ vegaEmbed("#chart-slope", {
         },
       },
     },
-    // Sport name labels at rightmost era (Paris 2024) — dy offsets separate overlapping lines
+    // Share value labels — only Sydney 2000 and Paris 2024, above dot, small font
     {
-      mark: { type: "text", align: "left", dx: 10, fontSize: 12, fontWeight: 700 },
-      transform: [
-        { filter: "datum.era == 'Paris 2024'" },
-        {
-          calculate: "datum.Sport == 'Swimming' ? -10 : datum.Sport == 'Athletics' ? 0 : datum.Sport == 'Cycling' ? 12 : datum.Sport == 'Rowing' ? 24 : 36",
-          as: "labelDy"
-        },
-      ],
-      encoding: {
-        x: { field: "era", type: "ordinal", sort: ["1970s","Sydney 2000","Post-Sydney","Paris 2024"] },
-        y: { field: "share", type: "quantitative" },
-        dy: { field: "labelDy", type: "quantitative" },
-        text: { field: "Sport", type: "nominal" },
-        color: {
-          field: "Sport", type: "nominal",
-          scale: { domain: ["Swimming","Athletics","Cycling","Rowing","Sailing"], range: [GOLD, GREEN, BLUE, BRONZE, SILVER] },
-        },
-      },
-    },
-    // Share value labels at each node
-    {
-      mark: { type: "text", dy: -13, fontSize: 10, fontWeight: 500 },
+      mark: { type: "text", dy: -12, fontSize: 10, fontWeight: 600 },
       encoding: {
         x: { field: "era", type: "ordinal", sort: ["1970s","Sydney 2000","Post-Sydney","Paris 2024"] },
         y: { field: "share", type: "quantitative" },
@@ -1154,16 +1133,16 @@ vegaEmbed("#chart-diverging", {
         ],
       },
     },
-    // Delta value labels — placed OUTSIDE bars with bigger font and more offset
+    // Delta value labels — outside bar tips, smaller font, clear of bars
     {
-      mark: { type: "text", fontSize: 12, fontWeight: 700 },
+      mark: { type: "text", fontSize: 10, fontWeight: 600 },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: { field: "delta", order: "descending" } },
         x: { field: "delta", type: "quantitative" },
         text: { field: "delta", type: "quantitative", format: "+.1f" },
-        color: { value: TEXT },
+        color: { value: MUTED },
         align: { condition: { test: "datum.delta >= 0", value: "left" }, value: "right" },
-        dx: { condition: { test: "datum.delta >= 0", value: 8 }, value: -8 },
+        dx: { condition: { test: "datum.delta >= 0", value: 6 }, value: -6 },
       },
     },
     // Annotation for the largest surge — placed below Swimming bar
@@ -1423,9 +1402,9 @@ vegaEmbed(
           ],
         },
       },
-      // Actual medal count label, offset from dot
+      // Actual medal count label — sits right beside the dot
       {
-        mark: { type: "text", fontSize: 12, fontWeight: 700 },
+        mark: { type: "text", fontSize: 11, fontWeight: 700, dy: 1 },
         encoding: {
           y: {
             field: "city",
@@ -1439,10 +1418,13 @@ vegaEmbed(
             value: "right",
           },
           dx: {
-            condition: { test: "datum.delta >= 0", value: 16 },
-            value: -16,
+            condition: { test: "datum.delta >= 0", value: 14 },
+            value: -14,
           },
-          color: { value: TEXT },
+          color: {
+            condition: { test: "datum.host == true", value: GOLD },
+            value: TEXT,
+          },
         },
       },
       // Year label pinned to the far left
