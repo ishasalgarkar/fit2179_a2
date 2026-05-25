@@ -1,3 +1,4 @@
+
 const BG2 = "#161B22",
   GOLD = "#F0B429",
   SILVER = "#8B98A8",
@@ -36,7 +37,7 @@ const CFG = {
   view: { stroke: null },
 };
 const O = { actions: false };
-
+ 
 const medalsByYear = [
   { Year: 1896, Medal: "Bronze", count: 1 },
   { Year: 1896, Medal: "Gold", count: 2 },
@@ -120,7 +121,7 @@ const medalsByYear = [
   { Year: 2016, Medal: "Gold", count: 8 },
   { Year: 2016, Medal: "Silver", count: 11 },
 ];
-
+ 
 const perMillion = [
   { NOC: "FIN", total_medals: 310, country_name: "Finland", medals_per_million: 56.41 },
   { NOC: "SWE", total_medals: 513, country_name: "Sweden", medals_per_million: 51.7 },
@@ -143,7 +144,7 @@ const perMillion = [
   { NOC: "GEO", total_medals: 32, country_name: "Georgia", medals_per_million: 8.58 },
   { NOC: "CAN", total_medals: 305, country_name: "Canada", medals_per_million: 8.45 },
 ];
-
+ 
 const worldMedalData = [
   { id: 4, NOC: "AFG", total_medals: 2 },
   { id: 12, NOC: "ALG", total_medals: 17 },
@@ -224,7 +225,7 @@ const worldMedalData = [
   { id: 862, NOC: "VEN", total_medals: 15 },
   { id: 716, NOC: "ZIM", total_medals: 8 },
 ];
-
+ 
 const perMillionMapData = [
   { id: 32, NOC: "ARG", country_name: "Argentina", medals_per_million: 1.69 },
   { id: 51, NOC: "ARM", country_name: "Armenia", medals_per_million: 5.35 },
@@ -273,7 +274,7 @@ const perMillionMapData = [
   { id: 860, NOC: "UZB", country_name: "Uzbekistan", medals_per_million: 1.05 },
   { id: 862, NOC: "VEN", country_name: "Venezuela", medals_per_million: 0.49 },
 ];
-
+ 
 const ausRank = [
   { Year: 1896, medals: 3, rank: 9 },
   { Year: 1900, medals: 6, rank: 9 },
@@ -303,7 +304,7 @@ const ausRank = [
   { Year: 2012, medals: 35, rank: 7 },
   { Year: 2016, medals: 29, rank: 8 },
 ];
-
+ 
 const bySport = [
   { Sport: "Athletics", Medal: "Bronze", count: 28 },
   { Sport: "Athletics", Medal: "Gold", count: 21 },
@@ -355,7 +356,7 @@ const bySport = [
   { Sport: "Wrestling", Medal: "Bronze", count: 3 },
   { Sport: "Wrestling", Medal: "Silver", count: 2 },
 ];
-
+ 
 const heatmapData = [
   { Sport: "Athletics", decade: "1890s", medal_count: 1 },
   { Sport: "Athletics", decade: "1900s", medal_count: 4 },
@@ -434,7 +435,7 @@ const heatmapData = [
   { Sport: "Triathlon", decade: "2000s", medal_count: 3 },
   { Sport: "Triathlon", decade: "2010s", medal_count: 3 },
 ];
-
+ 
 const heatmapDecades = [
   "1890s","1900s","1910s","1920s","1930s","1940s","1950s",
   "1960s","1970s","1980s","1990s","2000s","2010s",
@@ -453,7 +454,7 @@ for (const sport of heatmapSports) {
   }
 }
 const heatmapFilled = heatmapFull;
-
+ 
 const sydneyData = [
   { Sport: "Swimming",     sydney_2000: 18, other_games_avg: 7.29 },
   { Sport: "Cycling",      sydney_2000: 6,  other_games_avg: 3.46 },
@@ -470,7 +471,7 @@ const sydneyData = [
   { Sport: "Water Polo",   sydney_2000: 1,  other_games_avg: 1.0  },
   { Sport: "Judo",         sydney_2000: 1,  other_games_avg: 1.0  },
 ];
-
+ 
 const parisData = [
   { sport: "Swimming",             gold: 7, silver: 5, bronze: 8, total: 20 },
   { sport: "Athletics",            gold: 3, silver: 2, bronze: 2, total: 7  },
@@ -488,7 +489,7 @@ const parisData = [
   { sport: "Equestrian",           gold: 1, silver: 0, bronze: 0, total: 1  },
   { sport: "Weightlifting",        gold: 0, silver: 1, bronze: 0, total: 1  },
 ];
-
+ 
 const sydneyParis = [
   { Sport: "Swimming",  count: 18, games: "Sydney 2000" },
   { Sport: "Cycling",   count: 6,  games: "Sydney 2000" },
@@ -503,7 +504,7 @@ const sydneyParis = [
   { Sport: "Sailing",   count: 4,  games: "Paris 2024"  },
   { Sport: "Shooting",  count: 2,  games: "Paris 2024"  },
 ];
-
+ 
 const stateContributions = [
   { state: "New South Wales",              medals: 185 },
   { state: "Victoria",                     medals: 143 },
@@ -514,7 +515,7 @@ const stateContributions = [
   { state: "Australian Capital Territory", medals: 9   },
   { state: "Northern Territory",           medals: 5   },
 ];
-
+ 
 const hostCities = [
   { city: "Moscow",      year: 1980, aus_medals: 9,  host: false },
   { city: "Los Angeles", year: 1984, aus_medals: 24, host: false },
@@ -529,7 +530,7 @@ const hostCities = [
   { city: "Paris",       year: 2024, aus_medals: 53, host: false },
   { city: "Brisbane",    year: 2032, aus_medals: 0,  host: true  },
 ];
-
+ 
 const ageStats = [
   { decade: "1890s", min: 18, q1: 20, median: 22, q3: 26, max: 35 },
   { decade: "1900s", min: 16, q1: 20, median: 23, q3: 28, max: 42 },
@@ -544,7 +545,7 @@ const ageStats = [
   { decade: "2000s", min: 16, q1: 21, median: 24, q3: 28, max: 48 },
   { decade: "2010s", min: 16, q1: 21, median: 24, q3: 28, max: 61 },
 ];
-
+ 
 // ─────────────────────────────────────────────────────────────────────────────
 // CUSTOM IDIOM 1 — SLOPE CHART
 // Medal share (%) of each major sport across four defining eras.
@@ -573,7 +574,7 @@ const slopeData = [
   { Sport: "Sailing",   era: "Post-Sydney", share: 5.3  },
   { Sport: "Sailing",   era: "Paris 2024",  share: 7.5  },
 ];
-
+ 
 // ─────────────────────────────────────────────────────────────────────────────
 // CUSTOM IDIOM 2 — DIVERGING BAR
 // Derived field: delta = sydney_2000 − other_games_avg
@@ -585,9 +586,9 @@ const divergingData = sydneyData.map((d) => ({
   sydney: d.sydney_2000,
   avg: d.other_games_avg,
 }));
-
+ 
 const TOPO = "https://cdn.jsdelivr.net/npm/vega-datasets@2/data/world-110m.json";
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // MAP 1 — World total medals choropleth
 // ════════════════════════════════════════════════════════════════════════════
@@ -615,7 +616,7 @@ vegaEmbed("#map-world", {
     },
   ],
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // MAP 2 — Per capita choropleth
 // ════════════════════════════════════════════════════════════════════════════
@@ -643,7 +644,7 @@ vegaEmbed("#map-per-million", {
     },
   ],
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 1 — Bar: top 20 nations per capita
 // ════════════════════════════════════════════════════════════════════════════
@@ -663,7 +664,7 @@ vegaEmbed("#chart-per-million", {
     ],
   },
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 2 — Stacked area: trajectory 1896–2016 with Sydney annotation
 // ════════════════════════════════════════════════════════════════════════════
@@ -699,7 +700,7 @@ vegaEmbed("#chart-trajectory", {
     },
   ],
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 3 — Connected dot plot: rank at every Games
 // ════════════════════════════════════════════════════════════════════════════
@@ -774,11 +775,11 @@ const bumpData = [
   { country: "France",      year: "2016", rank: 7  },
   { country: "France",      year: "2024", rank: 4  },
 ];
-
+ 
 const YEAR_ORDER = ["1980","1984","1988","1992","1996","2000","2004","2008","2012","2016","2024"];
 const COUNTRY_DOMAIN = ["Australia","USA","China","Gr. Britain","Germany","France"];
 const COUNTRY_RANGE  = [GOLD, "#E84040", "#E87D40", SILVER, "#9B8EC4", BLUE];
-
+ 
 vegaEmbed("#chart-rank", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container",
@@ -875,7 +876,7 @@ vegaEmbed("#chart-rank", {
     },
   ],
 }, O);
-
+ 
 vegaEmbed("#chart-gold-sport", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 400, config: CFG,
@@ -913,7 +914,7 @@ vegaEmbed("#chart-gold-sport", {
     },
   ],
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 5 — Stacked bar: all medals top 10 sports
 // ════════════════════════════════════════════════════════════════════════════
@@ -936,7 +937,7 @@ vegaEmbed("#chart-sport-all", {
     tooltip: [{ field: "Sport" }, { field: "Medal" }, { field: "count", title: "Medals" }],
   },
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 6 — Donut: summer vs winter
 // ════════════════════════════════════════════════════════════════════════════
@@ -963,7 +964,7 @@ vegaEmbed("#chart-summer-winter", {
     },
   ],
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 7 — HEATMAP with zeros filled, threshold scale, gold peak outlines,
 //           and count labels inside cells
@@ -1030,7 +1031,7 @@ vegaEmbed("#chart-heatmap", {
     },
   ],
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 8 — SLOPE CHART: medal share across four eras  ◀ CUSTOM IDIOM 1
 // Derived metric: % share of Australian total per era
@@ -1109,7 +1110,7 @@ vegaEmbed("#chart-slope", {
     },
   ],
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 9 — DIVERGING BAR: Sydney 2000 delta from historical average  ◀ CUSTOM IDIOM 2
 // Derived field: delta = sydney_2000 − other_games_avg
@@ -1172,7 +1173,7 @@ vegaEmbed("#chart-diverging", {
     },
   ],
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 10 — Scatter: Sydney 2000 vs average
 // ════════════════════════════════════════════════════════════════════════════
@@ -1210,7 +1211,7 @@ vegaEmbed("#chart-sydney-scatter", {
     },
   ],
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // MAP 3 — Australia states choropleth
 // ════════════════════════════════════════════════════════════════════════════
@@ -1238,7 +1239,7 @@ vegaEmbed("#map-australia", {
     },
   ],
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 11 — Grouped bar: Sydney 2000 vs Paris 2024
 // ════════════════════════════════════════════════════════════════════════════
@@ -1259,7 +1260,7 @@ vegaEmbed("#chart-sydney-paris", {
     tooltip: [{ field: "Sport" }, { field: "games", title: "Games" }, { field: "count", title: "Medals" }],
   },
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 12 — Stacked bar: Paris 2024 breakdown
 // ════════════════════════════════════════════════════════════════════════════
@@ -1286,7 +1287,7 @@ vegaEmbed("#chart-paris", {
     tooltip: [{ field: "sport", title: "Sport" }, { field: "Medal" }, { field: "count", title: "Medals" }],
   },
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 13 — Box plot: age of medal winners by decade
 // ════════════════════════════════════════════════════════════════════════════
@@ -1329,7 +1330,7 @@ vegaEmbed("#chart-ages", {
   ],
   resolve: { scale: { y: "shared" } },
 }, O);
-
+ 
 // ════════════════════════════════════════════════════════════════════════════
 // MAP 4 — Bubble chart: medal haul per Games 1980–2032
 // Labels only shown for medals ≥ 40 or home Games to avoid clutter
