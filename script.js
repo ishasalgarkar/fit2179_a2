@@ -1076,21 +1076,24 @@ vegaEmbed("#chart-slope", {
         },
       },
     },
-    // Paris 2024 numbers only — staggered dy so no overlap, white text
+    // Paris 2024 end numbers — hardcoded positions to guarantee no overlap
+    // Swimming=37.7, Athletics=13.2, Cycling=9.4, Rowing=7.5, Sailing=7.5 (Rowing/Sailing same value so manually split)
     {
-      mark: { type: "text", align: "left", dx: 10, fontSize: 11, fontWeight: 700 },
-      transform: [
-        { filter: "datum.era == 'Paris 2024'" },
-        {
-          calculate: "datum.Sport == 'Swimming' ? -14 : datum.Sport == 'Athletics' ? 0 : datum.Sport == 'Cycling' ? 14 : datum.Sport == 'Rowing' ? 28 : 42",
-          as: "labelDy"
-        },
-      ],
+      mark: { type: "text", align: "left", dx: 10, fontSize: 12, fontWeight: 700, color: TEXT },
+      data: {
+        values: [
+          { era: "Paris 2024", share: 37.7, label: "38", dy: 0 },
+          { era: "Paris 2024", share: 13.2, label: "13", dy: 0 },
+          { era: "Paris 2024", share: 9.4,  label: "9",  dy: 0 },
+          { era: "Paris 2024", share: 7.5,  label: "8",  dy: -12 },
+          { era: "Paris 2024", share: 7.5,  label: "8",  dy: 12 },
+        ]
+      },
       encoding: {
         x: { field: "era", type: "ordinal", sort: ["1970s","Sydney 2000","Post-Sydney","Paris 2024"] },
         y: { field: "share", type: "quantitative" },
-        dy: { field: "labelDy", type: "quantitative" },
-        text: { field: "share", type: "quantitative", format: ".0f" },
+        dy: { field: "dy", type: "quantitative" },
+        text: { field: "label", type: "nominal" },
         color: { value: TEXT },
       },
     },
@@ -1134,9 +1137,9 @@ vegaEmbed("#chart-diverging", {
         ],
       },
     },
-    // Delta value labels — floated above bar tip, white, no overlap
+    // Delta value labels — above each bar tip, white, no overlap
     {
-      mark: { type: "text", fontSize: 11, fontWeight: 600, dy: -9 },
+      mark: { type: "text", fontSize: 11, fontWeight: 600, dy: -8 },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: { field: "delta", order: "descending" } },
         x: { field: "delta", type: "quantitative" },
