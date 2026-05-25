@@ -1076,13 +1076,13 @@ vegaEmbed("#chart-slope", {
         },
       },
     },
-    // Paris 2024 end labels only — white, staggered dy per sport so no overlap
+    // Sport name labels at rightmost era (Paris 2024) — dy offsets separate overlapping lines
     {
-      mark: { type: "text", align: "left", dx: 10, fontSize: 11, fontWeight: 700, color: TEXT },
+      mark: { type: "text", align: "left", dx: 10, fontSize: 12, fontWeight: 700 },
       transform: [
         { filter: "datum.era == 'Paris 2024'" },
         {
-          calculate: "datum.Sport == 'Swimming' ? -14 : datum.Sport == 'Athletics' ? 0 : datum.Sport == 'Cycling' ? 14 : datum.Sport == 'Rowing' ? 28 : 42",
+          calculate: "datum.Sport == 'Swimming' ? -10 : datum.Sport == 'Athletics' ? 0 : datum.Sport == 'Cycling' ? 12 : datum.Sport == 'Rowing' ? 24 : 36",
           as: "labelDy"
         },
       ],
@@ -1090,8 +1090,28 @@ vegaEmbed("#chart-slope", {
         x: { field: "era", type: "ordinal", sort: ["1970s","Sydney 2000","Post-Sydney","Paris 2024"] },
         y: { field: "share", type: "quantitative" },
         dy: { field: "labelDy", type: "quantitative" },
+        text: { field: "Sport", type: "nominal" },
+        color: {
+          field: "Sport", type: "nominal",
+          scale: { domain: ["Swimming","Athletics","Cycling","Rowing","Sailing"], range: [GOLD, GREEN, BLUE, BRONZE, SILVER] },
+        },
+      },
+    },
+    // Share value labels at each node
+    {
+      mark: { type: "text", dy: -13, fontSize: 10, fontWeight: 500 },
+      encoding: {
+        x: { field: "era", type: "ordinal", sort: ["1970s","Sydney 2000","Post-Sydney","Paris 2024"] },
+        y: { field: "share", type: "quantitative" },
         text: { field: "share", type: "quantitative", format: ".0f" },
-        color: { value: TEXT },
+        color: {
+          field: "Sport", type: "nominal",
+          scale: { domain: ["Swimming","Athletics","Cycling","Rowing","Sailing"], range: [GOLD, GREEN, BLUE, BRONZE, SILVER] },
+        },
+        opacity: {
+          condition: { test: "datum.era == 'Sydney 2000' || datum.era == 'Paris 2024'", value: 1 },
+          value: 0,
+        },
       },
     },
   ],
@@ -1134,17 +1154,15 @@ vegaEmbed("#chart-diverging", {
         ],
       },
     },
-    // Delta value labels — white, beside bar tips (right of teal, left of bronze)
+    // Delta value labels — above bar tips, not on them
     {
-      mark: { type: "text", fontSize: 11, fontWeight: 600 },
+      mark: { type: "text", fontSize: 11, fontWeight: 600, dy: -10 },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: { field: "delta", order: "descending" } },
         x: { field: "delta", type: "quantitative" },
         text: { field: "delta", type: "quantitative", format: "+.1f" },
         color: { value: TEXT },
-        align: { condition: { test: "datum.delta >= 0", value: "left" }, value: "right" },
-        dx: { condition: { test: "datum.delta >= 0", value: 7 }, value: -7 },
-        dy: { value: 1 },
+        align: { condition: { test: "datum.delta >= 0", value: "right" }, value: "left" },
       },
     },
     // Annotation for the largest surge — placed below Swimming bar
@@ -1404,9 +1422,9 @@ vegaEmbed(
           ],
         },
       },
-      // Medal count label — white, beside the dot not on it
+      // Medal count label — above the dot, not on it
       {
-        mark: { type: "text", fontSize: 11, fontWeight: 700 },
+        mark: { type: "text", fontSize: 11, fontWeight: 700, dy: -12 },
         encoding: {
           y: {
             field: "city",
@@ -1415,15 +1433,7 @@ vegaEmbed(
           },
           x: { field: "delta", type: "quantitative" },
           text: { field: "aus_medals", type: "quantitative" },
-          align: {
-            condition: { test: "datum.delta >= 0", value: "left" },
-            value: "right",
-          },
-          dx: {
-            condition: { test: "datum.delta >= 0", value: 16 },
-            value: -16,
-          },
-          dy: { value: 1 },
+          align: { value: "center" },
           color: { value: TEXT },
         },
       },
