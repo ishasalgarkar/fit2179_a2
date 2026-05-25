@@ -1076,13 +1076,13 @@ vegaEmbed("#chart-slope", {
         },
       },
     },
-    // Sport name labels at rightmost era (Paris 2024) — dy offsets separate overlapping lines
+    // Paris 2024 numbers only — staggered dy so no overlap, white text
     {
-      mark: { type: "text", align: "left", dx: 10, fontSize: 12, fontWeight: 700 },
+      mark: { type: "text", align: "left", dx: 10, fontSize: 11, fontWeight: 700 },
       transform: [
         { filter: "datum.era == 'Paris 2024'" },
         {
-          calculate: "datum.Sport == 'Swimming' ? -10 : datum.Sport == 'Athletics' ? 0 : datum.Sport == 'Cycling' ? 12 : datum.Sport == 'Rowing' ? 24 : 36",
+          calculate: "datum.Sport == 'Swimming' ? -14 : datum.Sport == 'Athletics' ? 0 : datum.Sport == 'Cycling' ? 14 : datum.Sport == 'Rowing' ? 28 : 42",
           as: "labelDy"
         },
       ],
@@ -1090,28 +1090,8 @@ vegaEmbed("#chart-slope", {
         x: { field: "era", type: "ordinal", sort: ["1970s","Sydney 2000","Post-Sydney","Paris 2024"] },
         y: { field: "share", type: "quantitative" },
         dy: { field: "labelDy", type: "quantitative" },
-        text: { field: "Sport", type: "nominal" },
-        color: {
-          field: "Sport", type: "nominal",
-          scale: { domain: ["Swimming","Athletics","Cycling","Rowing","Sailing"], range: [GOLD, GREEN, BLUE, BRONZE, SILVER] },
-        },
-      },
-    },
-    // Share value labels at each node
-    {
-      mark: { type: "text", dy: -13, fontSize: 10, fontWeight: 500 },
-      encoding: {
-        x: { field: "era", type: "ordinal", sort: ["1970s","Sydney 2000","Post-Sydney","Paris 2024"] },
-        y: { field: "share", type: "quantitative" },
         text: { field: "share", type: "quantitative", format: ".0f" },
-        color: {
-          field: "Sport", type: "nominal",
-          scale: { domain: ["Swimming","Athletics","Cycling","Rowing","Sailing"], range: [GOLD, GREEN, BLUE, BRONZE, SILVER] },
-        },
-        opacity: {
-          condition: { test: "datum.era == 'Sydney 2000' || datum.era == 'Paris 2024'", value: 1 },
-          value: 0,
-        },
+        color: { value: TEXT },
       },
     },
   ],
@@ -1154,9 +1134,9 @@ vegaEmbed("#chart-diverging", {
         ],
       },
     },
-    // Delta value labels — above bar tips, not on them
+    // Delta value labels — floated above bar tip, white, no overlap
     {
-      mark: { type: "text", fontSize: 11, fontWeight: 600, dy: -10 },
+      mark: { type: "text", fontSize: 11, fontWeight: 600, dy: -9 },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: { field: "delta", order: "descending" } },
         x: { field: "delta", type: "quantitative" },
@@ -1422,9 +1402,9 @@ vegaEmbed(
           ],
         },
       },
-      // Medal count label — above the dot, not on it
+      // Actual medal count label, offset from dot
       {
-        mark: { type: "text", fontSize: 11, fontWeight: 700, dy: -12 },
+        mark: { type: "text", fontSize: 12, fontWeight: 700 },
         encoding: {
           y: {
             field: "city",
@@ -1433,7 +1413,14 @@ vegaEmbed(
           },
           x: { field: "delta", type: "quantitative" },
           text: { field: "aus_medals", type: "quantitative" },
-          align: { value: "center" },
+          align: {
+            condition: { test: "datum.delta >= 0", value: "left" },
+            value: "right",
+          },
+          dx: {
+            condition: { test: "datum.delta >= 0", value: 16 },
+            value: -16,
+          },
           color: { value: TEXT },
         },
       },
