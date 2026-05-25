@@ -703,48 +703,185 @@ vegaEmbed("#chart-trajectory", {
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 3 — Connected dot plot: rank at every Games
 // ════════════════════════════════════════════════════════════════════════════
+// ── BUMP CHART: Medal tally rank — Australia vs rival nations 1980–2024 ──────
+// Multi-series rank-over-time chart. Each nation is a coloured line.
+// Australia highlighted in gold; rivals in muted tones.
+// Y-axis inverted (rank 1 = top). Labels pinned at 2024 end.
+// Data covers the modern era (1980–2024) where all nations competed consistently.
+const bumpData = [
+  // Australia
+  { country: "Australia", year: 1980, rank: 13 },
+  { country: "Australia", year: 1984, rank: 10 },
+  { country: "Australia", year: 1988, rank: 13 },
+  { country: "Australia", year: 1992, rank: 9  },
+  { country: "Australia", year: 1996, rank: 5  },
+  { country: "Australia", year: 2000, rank: 3  },
+  { country: "Australia", year: 2004, rank: 4  },
+  { country: "Australia", year: 2008, rank: 5  },
+  { country: "Australia", year: 2012, rank: 7  },
+  { country: "Australia", year: 2016, rank: 8  },
+  { country: "Australia", year: 2024, rank: 5  },
+  // USA
+  { country: "USA",       year: 1984, rank: 1  },
+  { country: "USA",       year: 1988, rank: 3  },
+  { country: "USA",       year: 1992, rank: 2  },
+  { country: "USA",       year: 1996, rank: 1  },
+  { country: "USA",       year: 2000, rank: 1  },
+  { country: "USA",       year: 2004, rank: 1  },
+  { country: "USA",       year: 2008, rank: 2  },
+  { country: "USA",       year: 2012, rank: 1  },
+  { country: "USA",       year: 2016, rank: 1  },
+  { country: "USA",       year: 2024, rank: 1  },
+  // China
+  { country: "China",     year: 1984, rank: 4  },
+  { country: "China",     year: 1988, rank: 11 },
+  { country: "China",     year: 1992, rank: 4  },
+  { country: "China",     year: 1996, rank: 4  },
+  { country: "China",     year: 2000, rank: 3  },
+  { country: "China",     year: 2004, rank: 2  },
+  { country: "China",     year: 2008, rank: 1  },
+  { country: "China",     year: 2012, rank: 2  },
+  { country: "China",     year: 2016, rank: 3  },
+  { country: "China",     year: 2024, rank: 2  },
+  // Great Britain
+  { country: "Gr. Britain", year: 1984, rank: 11 },
+  { country: "Gr. Britain", year: 1988, rank: 12 },
+  { country: "Gr. Britain", year: 1992, rank: 13 },
+  { country: "Gr. Britain", year: 1996, rank: 14 },
+  { country: "Gr. Britain", year: 2000, rank: 10 },
+  { country: "Gr. Britain", year: 2004, rank: 10 },
+  { country: "Gr. Britain", year: 2008, rank: 4  },
+  { country: "Gr. Britain", year: 2012, rank: 3  },
+  { country: "Gr. Britain", year: 2016, rank: 2  },
+  { country: "Gr. Britain", year: 2024, rank: 7  },
+  // Germany
+  { country: "Germany",   year: 1984, rank: 3  },
+  { country: "Germany",   year: 1988, rank: 2  },
+  { country: "Germany",   year: 1992, rank: 3  },
+  { country: "Germany",   year: 1996, rank: 3  },
+  { country: "Germany",   year: 2000, rank: 5  },
+  { country: "Germany",   year: 2004, rank: 6  },
+  { country: "Germany",   year: 2008, rank: 5  },
+  { country: "Germany",   year: 2012, rank: 6  },
+  { country: "Germany",   year: 2016, rank: 5  },
+  { country: "Germany",   year: 2024, rank: 10 },
+  // France
+  { country: "France",    year: 1984, rank: 9  },
+  { country: "France",    year: 1988, rank: 9  },
+  { country: "France",    year: 1992, rank: 8  },
+  { country: "France",    year: 1996, rank: 6  },
+  { country: "France",    year: 2000, rank: 7  },
+  { country: "France",    year: 2004, rank: 7  },
+  { country: "France",    year: 2008, rank: 7  },
+  { country: "France",    year: 2012, rank: 8  },
+  { country: "France",    year: 2016, rank: 7  },
+  { country: "France",    year: 2024, rank: 4  },
+];
+
 vegaEmbed("#chart-rank", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: "container", height: 340, config: CFG,
-  data: { values: ausRank },
+  width: "container",
+  height: 420,
+  config: CFG,
+  data: { values: bumpData },
   layer: [
+    // Sydney 2000 highlight band
     {
-      mark: { type: "line", strokeWidth: 2, color: GREEN },
+      mark: { type: "rect", opacity: 0.07, color: GOLD },
+      data: { values: [{ x1: 1998, x2: 2002 }] },
       encoding: {
-        x: { field: "Year", type: "quantitative", axis: { title: "Year", format: "d", grid: false } },
-        y: { field: "rank", type: "quantitative", scale: { reverse: true }, axis: { title: "Medal tally rank (lower = better)", grid: true } },
+        x:  { field: "x1", type: "quantitative" },
+        x2: { field: "x2", type: "quantitative" },
+        y:  { value: 0 },
+        y2: { value: 420 },
       },
     },
+    // Sydney 2000 label
     {
-      mark: { type: "point", filled: true, size: 80 },
+      mark: { type: "text", fontSize: 10, fontWeight: 600, fontStyle: "italic", angle: 0, dy: 14, dx: 2 },
+      data: { values: [{ x: 2000, y: 1, label: "Sydney 2000" }] },
       encoding: {
-        x: { field: "Year", type: "quantitative" },
-        y: { field: "rank", type: "quantitative", scale: { reverse: true } },
-        color: { condition: { test: "datum.rank <= 5", value: GOLD }, value: GREEN },
-        tooltip: [{ field: "Year", type: "quantitative" }, { field: "rank", title: "Rank" }, { field: "medals", title: "Medals" }],
+        x: { field: "x", type: "quantitative" },
+        y: { field: "y", type: "quantitative", scale: { reverse: true, domain: [1, 15] } },
+        text: { field: "label" },
+        color: { value: GOLD },
       },
     },
+    // Lines per country
     {
-      mark: { type: "text", dy: -14, fontSize: 11, fontWeight: 600 },
+      mark: { type: "line", strokeWidth: 2.5, interpolate: "monotone", opacity: 0.9 },
       encoding: {
-        x: { field: "Year", type: "quantitative" },
-        y: { field: "rank", type: "quantitative", scale: { reverse: true } },
+        x: {
+          field: "year", type: "quantitative",
+          axis: { title: null, format: "d", labelFontSize: 12, grid: false, tickCount: 11 },
+        },
+        y: {
+          field: "rank", type: "quantitative",
+          scale: { reverse: true, domain: [1, 15] },
+          axis: { title: "Medal tally rank  (1 = best)", grid: true, tickCount: 8 },
+        },
+        color: {
+          field: "country", type: "nominal",
+          scale: {
+            domain: ["Australia", "USA", "China", "Gr. Britain", "Germany", "France"],
+            range:  [GOLD, "#E84040", "#E87D40", SILVER, "#9B8EC4", BLUE],
+          },
+          legend: null,
+        },
+        detail: { field: "country", type: "nominal" },
+        tooltip: [
+          { field: "country", title: "Nation" },
+          { field: "year",    title: "Year", format: "d" },
+          { field: "rank",    title: "Rank" },
+        ],
+      },
+    },
+    // Dots at each Games
+    {
+      mark: { type: "point", filled: true, size: 70, opacity: 1 },
+      encoding: {
+        x: { field: "year", type: "quantitative" },
+        y: { field: "rank", type: "quantitative", scale: { reverse: true, domain: [1, 15] } },
+        color: {
+          field: "country", type: "nominal",
+          scale: {
+            domain: ["Australia", "USA", "China", "Gr. Britain", "Germany", "France"],
+            range:  [GOLD, "#E84040", "#E87D40", SILVER, "#9B8EC4", BLUE],
+          },
+        },
+        detail: { field: "country", type: "nominal" },
+      },
+    },
+    // Country name labels at rightmost year (2024)
+    {
+      mark: { type: "text", align: "left", dx: 8, fontSize: 11, fontWeight: 600 },
+      transform: [{ filter: "datum.year == 2024" }],
+      encoding: {
+        x: { field: "year", type: "quantitative" },
+        y: { field: "rank", type: "quantitative", scale: { reverse: true, domain: [1, 15] } },
+        text: { field: "country", type: "nominal" },
+        color: {
+          field: "country", type: "nominal",
+          scale: {
+            domain: ["Australia", "USA", "China", "Gr. Britain", "Germany", "France"],
+            range:  [GOLD, "#E84040", "#E87D40", SILVER, "#9B8EC4", BLUE],
+          },
+        },
+      },
+    },
+    // Rank number labels on Australia line only (at each node)
+    {
+      mark: { type: "text", dy: -12, fontSize: 10, fontWeight: 700 },
+      transform: [{ filter: "datum.country == 'Australia'" }],
+      encoding: {
+        x: { field: "year", type: "quantitative" },
+        y: { field: "rank", type: "quantitative", scale: { reverse: true, domain: [1, 15] } },
         text: { field: "rank", type: "quantitative" },
-        color: { condition: { test: "datum.rank<=5", value: GOLD }, value: MUTED },
-        opacity: { condition: { test: "datum.rank<=5||datum.Year==1936||datum.Year==2000", value: 1 }, value: 0 },
+        color: { value: GOLD },
       },
     },
   ],
 }, O);
-
-// ════════════════════════════════════════════════════════════════════════════
-// CHART 4 — LOLLIPOP: gold medals by sport
-// Combined rule (stem) + point (head) marks with count labels
-// ════════════════════════════════════════════════════════════════════════════
-const goldBySport = bySport
-  .filter((d) => d.Medal === "Gold")
-  .sort((a, b) => b.count - a.count)
-  .slice(0, 12);
 
 vegaEmbed("#chart-gold-sport", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
