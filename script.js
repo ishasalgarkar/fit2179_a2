@@ -879,7 +879,7 @@ vegaEmbed("#chart-rank", {
  
 vegaEmbed("#chart-gold-sport", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: "container", height: 400, config: CFG,
+  width: "container", height: 600, config: CFG,
   data: { values: bySport },
   layer: [
     // Stem: rule from 0 to count
@@ -1039,7 +1039,7 @@ vegaEmbed("#chart-heatmap", {
 // ════════════════════════════════════════════════════════════════════════════
 vegaEmbed("#chart-slope", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: "container", height: 460, config: CFG,
+   width: "container", height: 560, padding: {right: 80}, config: CFG,
   data: { values: slopeData },
   layer: [
     // Connection lines
@@ -1118,7 +1118,7 @@ vegaEmbed("#chart-slope", {
 // ════════════════════════════════════════════════════════════════════════════
 vegaEmbed("#chart-diverging", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: "container", height: 460, config: CFG,
+  width: "container", height: 560, config: CFG,
   data: { values: divergingData },
   layer: [
     // Zero reference line
