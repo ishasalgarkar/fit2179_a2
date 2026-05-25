@@ -880,7 +880,7 @@ vegaEmbed("#chart-rank", {
 vegaEmbed("#chart-gold-sport", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 400, config: CFG,
-  data: { values: goldBySport },
+  data: { values: bySport },
   layer: [
     // Stem: rule from 0 to count
     {
