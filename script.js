@@ -1154,15 +1154,17 @@ vegaEmbed("#chart-diverging", {
         ],
       },
     },
-    // Delta value labels — above bar tip, not on it
+    // Delta value labels — to the right of positive bars, left of negative bars
     {
-      mark: { type: "text", fontSize: 11, fontWeight: 600, dy: -10 },
+      mark: { type: "text", fontSize: 11, fontWeight: 600 },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: { field: "delta", order: "descending" } },
         x: { field: "delta", type: "quantitative" },
         text: { field: "delta", type: "quantitative", format: "+.1f" },
         color: { value: TEXT },
-        align: { condition: { test: "datum.delta >= 0", value: "right" }, value: "left" },
+        align: { condition: { test: "datum.delta >= 0", value: "left" }, value: "right" },
+        dx: { condition: { test: "datum.delta >= 0", value: 6 }, value: -6 },
+        baseline: { value: "middle" },
       },
     },
     // Annotation for the largest surge — placed below Swimming bar
@@ -1422,9 +1424,9 @@ vegaEmbed(
           ],
         },
       },
-      // Actual medal count label, offset from dot — beside not on
+      // Actual medal count label — beside the dot using dx
       {
-        mark: { type: "text", fontSize: 11, fontWeight: 700, dy: -14 },
+        mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle" },
         encoding: {
           y: {
             field: "city",
@@ -1433,7 +1435,8 @@ vegaEmbed(
           },
           x: { field: "delta", type: "quantitative" },
           text: { field: "aus_medals", type: "quantitative" },
-          align: { value: "center" },
+          dx: { condition: { test: "datum.delta >= 0", value: 18 }, value: -18 },
+          align: { condition: { test: "datum.delta >= 0", value: "left" }, value: "right" },
           color: { value: TEXT },
         },
       },
