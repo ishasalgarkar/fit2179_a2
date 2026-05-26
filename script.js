@@ -917,25 +917,141 @@ vegaEmbed("#chart-gold-sport", {
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 5 — Stacked bar: all medals top 10 sports
 // ════════════════════════════════════════════════════════════════════════════
-vegaEmbed("#chart-sport-all", {
-  $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-  width: "container", height: 380, config: CFG,
-  data: {
-    values: bySport.filter((d) =>
-      ["Swimming","Athletics","Cycling","Rowing","Sailing","Equestrianism","Shooting","Hockey","Canoeing","Diving"].includes(d.Sport)
-    ),
-  },
-  mark: { type: "bar" },
-  encoding: {
-    y: { field: "Sport", type: "nominal", sort: { field: "count", op: "sum", order: "descending" }, axis: { title: null, labelFontSize: 11 } },
-    x: { field: "count", type: "quantitative", stack: "zero", axis: { title: "Medals", grid: true } },
-    color: {
-      field: "Medal", type: "nominal",
-      scale: { domain: ["Gold","Silver","Bronze"], range: [GOLD, SILVER, BRONZE] },
-    },
-    tooltip: [{ field: "Sport" }, { field: "Medal" }, { field: "count", title: "Medals" }],
-  },
-}, O);
+// ── SANKEY: Sport → Medal type flow (replaces stacked bar chart-sport-all) ──
+// Built with D3 + d3-sankey via CDN. Renders into #chart-sport-all div.
+(function buildSankey() {
+  const SANKEY_SPORTS = [
+    "Swimming","Athletics","Cycling","Rowing","Sailing",
+    "Equestrianism","Shooting","Hockey","Canoeing","Diving"
+  ];
+
+  // Aggregate: sum gold/silver/bronze per sport from bySport
+  const sportTotals = {};
+  SANKEY_SPORTS.forEach(s => { sportTotals[s] = { Gold: 0, Silver: 0, Bronze: 0 }; });
+  bySport.forEach(d => {
+    if (sportTotals[d.Sport] && d.Medal) sportTotals[d.Sport][d.Medal] += d.count;
+  });
+
+  // Nodes: sports (left) + medal types (right)
+  const nodeNames = [...SANKEY_SPORTS, "Gold", "Silver", "Bronze"];
+  const nodeIndex = {};
+  nodeNames.forEach((n, i) => nodeIndex[n] = i);
+
+  // Links: sport → medal type
+  const links = [];
+  SANKEY_SPORTS.forEach(sport => {
+    ["Gold","Silver","Bronze"].forEach(medal => {
+      const v = sportTotals[sport][medal];
+      if (v > 0) links.push({ source: nodeIndex[sport], target: nodeIndex[medal], value: v });
+    });
+  });
+
+  // Colour map
+  const nodeColors = {};
+  SANKEY_SPORTS.forEach(s => nodeColors[s] = "#2DD4A0");
+  nodeColors["Gold"]   = "#F0B429";
+  nodeColors["Silver"] = "#8B98A8";
+  nodeColors["Bronze"] = "#C07A45";
+
+  function render() {
+    const container = document.getElementById("chart-sport-all");
+    if (!container) return;
+    container.innerHTML = "";
+
+    const totalW = container.clientWidth || 700;
+    const totalH = 480;
+    const margin = { top: 16, right: 110, bottom: 16, left: 130 };
+    const W = totalW - margin.left - margin.right;
+    const H = totalH - margin.top - margin.bottom;
+
+    const svg = d3.select(container).append("svg")
+      .attr("width", totalW)
+      .attr("height", totalH)
+      .style("background", "transparent")
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const sankeyGen = d3.sankey()
+      .nodeWidth(18)
+      .nodePadding(10)
+      .extent([[0, 0], [W, H]]);
+
+    const graph = sankeyGen({
+      nodes: nodeNames.map(name => ({ name })),
+      links: links.map(l => ({ ...l })),
+    });
+
+    // Draw links
+    const linkPath = d3.sankeyLinkHorizontal();
+    svg.append("g").selectAll("path")
+      .data(graph.links)
+      .join("path")
+        .attr("d", linkPath)
+        .attr("stroke", d => {
+          const src = d.source.name;
+          return src === "Gold" ? "#F0B429" : src === "Silver" ? "#8B98A8" : src === "Bronze" ? "#C07A45" : "#2DD4A0";
+        })
+        .attr("stroke-width", d => Math.max(1, d.width))
+        .attr("fill", "none")
+        .attr("opacity", 0.38)
+        .append("title")
+          .text(d => `${d.source.name} → ${d.target.name}: ${d.value} medals`);
+
+    // Draw nodes
+    const node = svg.append("g").selectAll("g")
+      .data(graph.nodes)
+      .join("g");
+
+    node.append("rect")
+      .attr("x", d => d.x0)
+      .attr("y", d => d.y0)
+      .attr("width", d => d.x1 - d.x0)
+      .attr("height", d => Math.max(1, d.y1 - d.y0))
+      .attr("fill", d => nodeColors[d.name] || "#2DD4A0")
+      .attr("opacity", 0.92)
+      .attr("rx", 3)
+      .append("title")
+        .text(d => `${d.name}: ${d.value} medals`);
+
+    // Node labels — sports on left, medal types on right
+    node.append("text")
+      .attr("x", d => d.x0 < W / 2 ? d.x0 - 8 : d.x1 + 8)
+      .attr("y", d => (d.y0 + d.y1) / 2)
+      .attr("dy", "0.35em")
+      .attr("text-anchor", d => d.x0 < W / 2 ? "end" : "start")
+      .attr("fill", d => nodeColors[d.name] || "#E6EDF3")
+      .attr("font-family", "Poppins, sans-serif")
+      .attr("font-size", "12px")
+      .attr("font-weight", "600")
+      .text(d => d.name);
+
+    // Medal count on right-side nodes
+    node.filter(d => ["Gold","Silver","Bronze"].includes(d.name))
+      .append("text")
+      .attr("x", d => d.x1 + 8)
+      .attr("y", d => (d.y0 + d.y1) / 2 + 16)
+      .attr("fill", "#7D8590")
+      .attr("font-family", "Poppins, sans-serif")
+      .attr("font-size", "11px")
+      .text(d => `${d.value} medals`);
+  }
+
+  // Load D3 + d3-sankey from CDN then render
+  function loadScript(src, cb) {
+    const s = document.createElement("script");
+    s.src = src; s.onload = cb; document.head.appendChild(s);
+  }
+
+  if (typeof d3 === "undefined") {
+    loadScript("https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js", () => {
+      loadScript("https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js", render);
+    });
+  } else if (typeof d3.sankey === "undefined") {
+    loadScript("https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js", render);
+  } else {
+    render();
+  }
+})();
  
 // ════════════════════════════════════════════════════════════════════════════
 // CHART 6 — Donut: summer vs winter
