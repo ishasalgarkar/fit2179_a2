@@ -1076,41 +1076,17 @@ vegaEmbed("#chart-slope", {
         },
       },
     },
-    // Sport name labels at rightmost era (Paris 2024) — dy offsets separate overlapping lines
+    // Final value label at Paris 2024 end only — no sport name, just the number
     {
-      mark: { type: "text", align: "left", dx: 10, fontSize: 12, fontWeight: 700 },
-      transform: [
-        { filter: "datum.era == 'Paris 2024'" },
-        {
-          calculate: "datum.Sport == 'Swimming' ? -10 : datum.Sport == 'Athletics' ? 0 : datum.Sport == 'Cycling' ? 12 : datum.Sport == 'Rowing' ? 24 : 36",
-          as: "labelDy"
-        },
-      ],
+      mark: { type: "text", align: "left", dx: 8, fontSize: 11, fontWeight: 700 },
+      transform: [{ filter: "datum.era == 'Paris 2024'" }],
       encoding: {
-        x: { field: "era", type: "ordinal", sort: ["1970s","Sydney 2000","Post-Sydney","Paris 2024"] },
-        y: { field: "share", type: "quantitative" },
-        dy: { field: "labelDy", type: "quantitative" },
-        text: { field: "Sport", type: "nominal" },
-        color: {
-          field: "Sport", type: "nominal",
-          scale: { domain: ["Swimming","Athletics","Cycling","Rowing","Sailing"], range: [GOLD, GREEN, BLUE, BRONZE, SILVER] },
-        },
-      },
-    },
-    // Share value labels at each node
-    {
-      mark: { type: "text", dy: -13, fontSize: 10, fontWeight: 500 },
-      encoding: {
-        x: { field: "era", type: "ordinal", sort: ["1970s","Sydney 2000","Post-Sydney","Paris 2024"] },
+        x: { field: "era", type: "ordinal", sort: ["1970s","Sydney 2024","Post-Sydney","Paris 2024"] },
         y: { field: "share", type: "quantitative" },
         text: { field: "share", type: "quantitative", format: ".0f" },
         color: {
           field: "Sport", type: "nominal",
           scale: { domain: ["Swimming","Athletics","Cycling","Rowing","Sailing"], range: [GOLD, GREEN, BLUE, BRONZE, SILVER] },
-        },
-        opacity: {
-          condition: { test: "datum.era == 'Sydney 2000' || datum.era == 'Paris 2024'", value: 1 },
-          value: 0,
         },
       },
     },
@@ -1154,17 +1130,19 @@ vegaEmbed("#chart-diverging", {
         ],
       },
     },
-    // Delta value labels — to the right of positive bars, left of negative bars
+    // Delta value labels — beside bars (not on them), clear gap from bar end
     {
-      mark: { type: "text", fontSize: 11, fontWeight: 600 },
+      mark: { type: "text", fontSize: 11, fontWeight: 600, baseline: "middle" },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: { field: "delta", order: "descending" } },
         x: { field: "delta", type: "quantitative" },
         text: { field: "delta", type: "quantitative", format: "+.1f" },
-        color: { value: TEXT },
+        color: {
+          condition: { test: "datum.delta >= 0", value: GREEN },
+          value: BRONZE,
+        },
         align: { condition: { test: "datum.delta >= 0", value: "left" }, value: "right" },
-        dx: { condition: { test: "datum.delta >= 0", value: 6 }, value: -6 },
-        baseline: { value: "middle" },
+        dx: { condition: { test: "datum.delta >= 0", value: 10 }, value: -10 },
       },
     },
     // Annotation for the largest surge — placed below Swimming bar
@@ -1424,7 +1402,7 @@ vegaEmbed(
           ],
         },
       },
-      // Actual medal count label — beside the dot using dx
+      // Actual medal count label — beside dot with clear gap, never overlapping
       {
         mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle" },
         encoding: {
@@ -1435,9 +1413,12 @@ vegaEmbed(
           },
           x: { field: "delta", type: "quantitative" },
           text: { field: "aus_medals", type: "quantitative" },
-          dx: { condition: { test: "datum.delta >= 0", value: 18 }, value: -18 },
+          dx: { condition: { test: "datum.delta >= 0", value: 22 }, value: -22 },
           align: { condition: { test: "datum.delta >= 0", value: "left" }, value: "right" },
-          color: { value: TEXT },
+          color: {
+            condition: { test: "datum.host == true", value: GOLD },
+            value: TEXT,
+          },
         },
       },
       // Year label pinned to the far left
