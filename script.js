@@ -668,14 +668,14 @@ vegaEmbed("#chart-per-million", {
         ],
       },
     },
-    // Annotation: small label inside Australia bar
+    // Annotation: label beside Australia bar
     {
-      mark: { type: "text", align: "left", dx: 6, fontSize: 11, fontWeight: 700, fontStyle: "italic" },
+      mark: { type: "text", align: "left", dx: 6, fontSize: 11, fontWeight: 600, fontStyle: "italic" },
       transform: [{ filter: "datum.NOC == 'AUS'" }],
       encoding: {
         y: { field: "country_name", type: "nominal", sort: null },
-        x: { datum: 0 },
-        text: { value: "← top 10 globally" },
+        x: { field: "medals_per_million", type: "quantitative" },
+        text: { value: "← 8th globally, despite just 26M people" },
         color: { value: GREEN },
       },
     },
