@@ -846,6 +846,11 @@ vegaEmbed("#chart-rank", {
           scale: { domain: COUNTRY_DOMAIN, range: COUNTRY_RANGE },
         },
         detail: { field: "country", type: "nominal" },
+        tooltip: [
+          { field: "country", title: "Nation" },
+          { field: "year",    title: "Year" },
+          { field: "rank",    title: "Rank" },
+        ],
       },
     },
     // Country name labels pinned at 2024 (rightmost column)
@@ -1212,6 +1217,7 @@ vegaEmbed("#chart-slope", {
           field: "Sport", type: "nominal",
           scale: { domain: ["Swimming","Athletics","Cycling","Rowing","Sailing"], range: [GOLD, GREEN, BLUE, BRONZE, SILVER] },
         },
+        tooltip: [{ field: "Sport" }, { field: "era", title: "Era" }, { field: "share", title: "Medal share %", format: ".1f" }],
       },
     },
     // Final value label at Paris 2024 end only — no sport name, just the number
