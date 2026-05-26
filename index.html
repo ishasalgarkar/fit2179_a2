@@ -177,7 +177,73 @@
             Swimming dominates every stream — its gold, silver, and bronze
             flows dwarf every other sport combined.
           </div>
-          <div id="chart-sport-all"></div>
+          <div id="chart-sport-all" style="width:100%;min-height:480px;"></div>
+          <script>
+          (function(){
+            var SPORTS=["Swimming","Athletics","Cycling","Rowing","Sailing","Equestrianism","Shooting","Hockey","Canoeing","Diving"];
+            var RAW=[
+              {Sport:"Athletics",Medal:"Bronze",count:28},{Sport:"Athletics",Medal:"Gold",count:21},{Sport:"Athletics",Medal:"Silver",count:16},
+              {Sport:"Canoeing",Medal:"Bronze",count:5},{Sport:"Canoeing",Medal:"Gold",count:3},{Sport:"Canoeing",Medal:"Silver",count:4},
+              {Sport:"Cycling",Medal:"Bronze",count:10},{Sport:"Cycling",Medal:"Gold",count:14},{Sport:"Cycling",Medal:"Silver",count:12},
+              {Sport:"Diving",Medal:"Bronze",count:4},{Sport:"Diving",Medal:"Gold",count:3},{Sport:"Diving",Medal:"Silver",count:2},
+              {Sport:"Equestrianism",Medal:"Bronze",count:6},{Sport:"Equestrianism",Medal:"Gold",count:6},{Sport:"Equestrianism",Medal:"Silver",count:6},
+              {Sport:"Hockey",Medal:"Bronze",count:2},{Sport:"Hockey",Medal:"Gold",count:4},{Sport:"Hockey",Medal:"Silver",count:1},
+              {Sport:"Rowing",Medal:"Bronze",count:11},{Sport:"Rowing",Medal:"Gold",count:11},{Sport:"Rowing",Medal:"Silver",count:13},
+              {Sport:"Sailing",Medal:"Bronze",count:8},{Sport:"Sailing",Medal:"Gold",count:11},{Sport:"Sailing",Medal:"Silver",count:9},
+              {Sport:"Shooting",Medal:"Bronze",count:6},{Sport:"Shooting",Medal:"Gold",count:5},{Sport:"Shooting",Medal:"Silver",count:5},
+              {Sport:"Swimming",Medal:"Bronze",count:82},{Sport:"Swimming",Medal:"Gold",count:60},{Sport:"Swimming",Medal:"Silver",count:67}
+            ];
+            function loadScript(src,cb){var s=document.createElement("script");s.src=src;s.onload=cb;document.head.appendChild(s);}
+            function drawSankey(){
+              var container=document.getElementById("chart-sport-all");
+              container.innerHTML="";
+              var totalW=container.clientWidth||680;
+              var totalH=500;
+              var mg={top:12,right:110,bottom:20,left:145};
+              var W=totalW-mg.left-mg.right, H=totalH-mg.top-mg.bottom;
+              var nodeNames=SPORTS.concat(["Gold","Silver","Bronze"]);
+              var ni={};nodeNames.forEach(function(n,i){ni[n]=i;});
+              var links=[];
+              RAW.forEach(function(d){if(SPORTS.indexOf(d.Sport)>=0)links.push({source:ni[d.Sport],target:ni[d.Medal],value:d.count});});
+              var sg=d3.sankey().nodeWidth(18).nodePadding(8).extent([[0,0],[W,H]]);
+              var graph=sg({nodes:nodeNames.map(function(n){return{name:n};}),links:links.map(function(l){return Object.assign({},l);})});
+              var NCOL={"Gold":"#F0B429","Silver":"#8B98A8","Bronze":"#C07A45","_":"#2DD4A0"};
+              function nc(n){return NCOL[n]||NCOL._;}
+              var svg=d3.select(container).append("svg").attr("width",totalW).attr("height",totalH).style("background","transparent");
+              var g=svg.append("g").attr("transform","translate("+mg.left+","+mg.top+")");
+              g.append("g").selectAll("path").data(graph.links).join("path")
+                .attr("d",d3.sankeyLinkHorizontal())
+                .attr("stroke",function(d){return nc(d.source.name);})
+                .attr("stroke-width",function(d){return Math.max(1,d.width);})
+                .attr("fill","none").attr("opacity",0.35)
+                .append("title").text(function(d){return d.source.name+"→"+d.target.name+": "+d.value;});
+              var node=g.append("g").selectAll("g").data(graph.nodes).join("g");
+              node.append("rect")
+                .attr("x",function(d){return d.x0;}).attr("y",function(d){return d.y0;})
+                .attr("width",function(d){return d.x1-d.x0;}).attr("height",function(d){return Math.max(1,d.y1-d.y0);})
+                .attr("fill",function(d){return nc(d.name);}).attr("rx",3).attr("opacity",0.92)
+                .append("title").text(function(d){return d.name+": "+d.value+" medals";});
+              node.filter(function(d){return d.x0<W/2;}).append("text")
+                .attr("x",function(d){return d.x0-10;}).attr("y",function(d){return(d.y0+d.y1)/2;})
+                .attr("dy","0.35em").attr("text-anchor","end")
+                .attr("fill","#E6EDF3").attr("font-family","Poppins,sans-serif").attr("font-size","12px").attr("font-weight","600")
+                .text(function(d){return d.name;});
+              node.filter(function(d){return d.x0>=W/2;}).append("text")
+                .attr("x",function(d){return d.x1+10;}).attr("y",function(d){return(d.y0+d.y1)/2;})
+                .attr("dy","0.35em").attr("text-anchor","start")
+                .attr("fill",function(d){return nc(d.name);})
+                .attr("font-family","Poppins,sans-serif").attr("font-size","12px").attr("font-weight","700")
+                .text(function(d){return d.name+" ("+d.value+")";});
+            }
+            if(typeof d3==="undefined"){
+              loadScript("https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js",function(){
+                loadScript("https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js",drawSankey);
+              });
+            } else if(typeof d3.sankey==="undefined"){
+              loadScript("https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js",drawSankey);
+            } else { drawSankey(); }
+          })();
+          </script>
         </div>
         <div class="chart-card">
           <div class="chart-tag">Chart 6 of 12 — Donut</div>
