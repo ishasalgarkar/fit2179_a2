@@ -1368,7 +1368,7 @@ vegaEmbed("#chart-diverging", {
       mark: { type: "text", fontSize: 11, fontWeight: 600, baseline: "middle", align: "left", dx: 6 },
       transform: [{ filter: "datum.delta > 0" }],
       encoding: {
-        y: { field: "Sport", type: "nominal", sort: "-x" },
+        y: { field: "Sport", type: "nominal", sort: null },
         x: { field: "delta", type: "quantitative" },
         text: { field: "delta", type: "quantitative", format: "+.1f" },
         color: { value: GREEN },
@@ -1378,7 +1378,7 @@ vegaEmbed("#chart-diverging", {
       mark: { type: "text", fontSize: 11, fontWeight: 600, baseline: "middle", align: "right", dx: -6 },
       transform: [{ filter: "datum.delta < 0" }],
       encoding: {
-        y: { field: "Sport", type: "nominal", sort: "-x" },
+        y: { field: "Sport", type: "nominal", sort: null },
         x: { field: "delta", type: "quantitative" },
         text: { field: "delta", type: "quantitative", format: "+.1f" },
         color: { value: BRONZE },
@@ -1388,7 +1388,7 @@ vegaEmbed("#chart-diverging", {
       mark: { type: "text", fontSize: 11, fontWeight: 600, baseline: "middle", align: "left", dx: 6 },
       transform: [{ filter: "datum.delta == 0" }],
       encoding: {
-        y: { field: "Sport", type: "nominal", sort: "-x" },
+        y: { field: "Sport", type: "nominal", sort: null },
         x: { datum: 0 },
         text: { value: "+0.0" },
         color: { value: MUTED },
@@ -1399,7 +1399,7 @@ vegaEmbed("#chart-diverging", {
       mark: { type: "text", fontSize: 10, fontStyle: "italic", align: "left", dx: 8, dy: 12 },
       data: { values: [{ Sport: "Swimming", delta: 10.71, note: "Largest single-sport home-Games surge" }] },
       encoding: {
-        y: { field: "Sport", type: "nominal", sort: "-x" },
+        y: { field: "Sport", type: "nominal", sort: null },
         x: { field: "delta", type: "quantitative" },
         text: { field: "note" },
         color: { value: MUTED },
@@ -1502,10 +1502,10 @@ vegaEmbed("#map-australia", {
 vegaEmbed("#chart-sydney-paris", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 360, config: CFG,
-  data: { values: sydneyParis },
+  data: { values: [...sydneyParis].sort((a,b) => b.count - a.count) },
   mark: { type: "bar", cornerRadiusTopRight: 2 },
   encoding: {
-    y: { field: "Sport", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
+    y: { field: "Sport", type: "nominal", sort: null, axis: { title: null, labelFontSize: 12 } },
     x: { field: "count", type: "quantitative", axis: { title: "Medals", grid: true } },
     color: {
       field: "games", type: "nominal",
@@ -1534,7 +1534,7 @@ vegaEmbed("#chart-paris", {
   },
   mark: { type: "bar" },
   encoding: {
-    y: { field: "sport", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
+    y: { field: "sport", type: "nominal", sort: null, axis: { title: null, labelFontSize: 12 } },
     x: { field: "count", type: "quantitative", stack: "zero", axis: { title: "Medals", grid: true } },
     color: {
       field: "Medal", type: "nominal",
@@ -1659,7 +1659,7 @@ vegaEmbed(
           y: {
             field: "city",
             type: "nominal",
-            sort: "x",
+            sort: null,
             axis: { title: null, labelFontSize: 12, labelFontWeight: 500 },
           },
           x: { datum: 0 },
@@ -1677,7 +1677,7 @@ vegaEmbed(
           y: {
             field: "city",
             type: "nominal",
-            sort: "x",
+            sort: null,
           },
           x: {
             field: "delta",
@@ -1709,7 +1709,7 @@ vegaEmbed(
           { filter: "datum.delta >= 0" },
         ],
         encoding: {
-          y: { field: "city", type: "nominal", sort: "x" },
+          y: { field: "city", type: "nominal", sort: null },
           x: { field: "labelX", type: "quantitative" },
           text: { field: "aus_medals", type: "quantitative" },
           color: { value: TEXT },
@@ -1723,7 +1723,7 @@ vegaEmbed(
           { filter: "datum.delta < 0" },
         ],
         encoding: {
-          y: { field: "city", type: "nominal", sort: "x" },
+          y: { field: "city", type: "nominal", sort: null },
           x: { field: "labelX", type: "quantitative" },
           text: { field: "aus_medals", type: "quantitative" },
           color: { value: TEXT },
@@ -1742,7 +1742,7 @@ vegaEmbed(
           y: {
             field: "city",
             type: "nominal",
-            sort: "x",
+            sort: null,
           },
           x: { datum: -22 },
           text: { field: "year", type: "quantitative", format: "d" },
