@@ -35,7 +35,7 @@ const CFG = {
   title: { color: TEXT, font: FONT, fontSize: 13, fontWeight: 500 },
   view: { stroke: null },
 };
-const O = { actions: false };
+const O = { actions: false, tooltip: true };
  
 const medalsByYear = [
   { Year: 1896, Medal: "Bronze", count: 1 },
