@@ -655,7 +655,7 @@ vegaEmbed("#chart-per-million", {
     {
       mark: { type: "bar", cornerRadiusTopRight: 3, cornerRadiusBottomRight: 3 },
       encoding: {
-        y: { field: "country_name", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
+        y: { field: "country_name", type: "nominal", sort: "x", axis: { title: null, labelFontSize: 12 } },
         x: { field: "medals_per_million", type: "quantitative", axis: { title: "Medals per million people", grid: true } },
         color: { condition: { test: "datum.NOC == 'AUS'", value: GREEN }, value: "#2A3A4A" },
         tooltip: [
@@ -665,15 +665,15 @@ vegaEmbed("#chart-per-million", {
         ],
       },
     },
-    // Annotation label for Australia
+    // Annotation: small label inside Australia bar
     {
       mark: { type: "text", align: "left", dx: 6, fontSize: 11, fontWeight: 700, fontStyle: "italic" },
       transform: [{ filter: "datum.NOC == 'AUS'" }],
       encoding: {
-        y: { field: "country_name", type: "nominal", sort: "-x" },
-        x: { field: "medals_per_million", type: "quantitative" },
-        text: { value: "← Australia: top 10 per capita despite 26M population" },
-        color: { value: GREEN },
+        y: { field: "country_name", type: "nominal", sort: "x" },
+        x: { datum: 0 },
+        text: { value: "Top 10 per capita despite 26M population" },
+        color: { value: "#0d1117" },
       },
     },
   ],
@@ -706,11 +706,33 @@ vegaEmbed("#chart-trajectory", {
       data: { values: [{ Year: 2000 }] },
       encoding: { x: { field: "Year", type: "quantitative" } },
     },
+    // Sydney 2000 label
+    {
+      mark: { type: "text", align: "right", dx: -4, dy: 10, fontSize: 10, fontWeight: 600, fontStyle: "italic" },
+      data: { values: [{ Year: 2000, count: 58 }] },
+      encoding: {
+        x: { field: "Year", type: "quantitative" },
+        y: { field: "count", type: "quantitative" },
+        text: { value: "Sydney 2000\npeak: 58 medals" },
+        color: { value: GOLD },
+      },
+    },
     // AIS founding annotation
     {
       mark: { type: "rule", color: "rgba(45,212,160,0.3)", strokeDash: [4,3], strokeWidth: 1 },
       data: { values: [{ Year: 1981 }] },
       encoding: { x: { field: "Year", type: "quantitative" } },
+    },
+    // AIS label
+    {
+      mark: { type: "text", align: "left", dx: 4, dy: 10, fontSize: 10, fontWeight: 600, fontStyle: "italic" },
+      data: { values: [{ Year: 1981, count: 40 }] },
+      encoding: {
+        x: { field: "Year", type: "quantitative" },
+        y: { field: "count", type: "quantitative" },
+        text: { value: "AIS founded\n1981" },
+        color: { value: GREEN },
+      },
     },
   ],
 }, O);
@@ -931,9 +953,9 @@ vegaEmbed("#chart-gold-sport", {
         color: { condition: { test: "datum.Sport=='Swimming'", value: GOLD }, value: TEXT },
       },
     },
-    // Annotation: Swimming dominance
+    // Annotation: Swimming dominance — above the dot
     {
-      mark: { type: "text", align: "left", dx: 8, fontSize: 11, fontWeight: 600, fontStyle: "italic" },
+      mark: { type: "text", align: "left", dx: 8, dy: -14, fontSize: 11, fontWeight: 600, fontStyle: "italic" },
       data: { values: [{ Sport: "Swimming", count: 62 }] },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: "-x" },
@@ -1430,14 +1452,14 @@ vegaEmbed("#chart-sydney-scatter", {
         color: { value: MUTED },
       },
     },
-    // Swimming callout
+    // Swimming callout — sits right beside the Swimming dot
     {
-      mark: { type: "text", fontSize: 11, fontWeight: 700, fontStyle: "italic", align: "left", dx: 8 },
-      data: { values: [{ x: 14.5, y: 18 }] },
+      mark: { type: "text", fontSize: 11, fontWeight: 700, fontStyle: "italic", align: "left", dx: 10, dy: -8 },
+      data: { values: [{ x: 7.5, y: 18 }] },
       encoding: {
         x: { field: "x", type: "quantitative" },
         y: { field: "y", type: "quantitative" },
-        text: { value: "Swimming: already dominant,\nstill surged further at home" },
+        text: { value: "Already dominant, still\nsurged further at home" },
         color: { value: GOLD },
       },
     },
@@ -1557,6 +1579,34 @@ vegaEmbed("#chart-ages", {
           { field: "q1", title: "Q1" },
           { field: "q3", title: "Q3" },
         ],
+      },
+    },
+    // Horizontal reference line at median age ~23
+    {
+      mark: { type: "rule", color: "rgba(240,180,41,0.25)", strokeDash: [4,3], strokeWidth: 1.5 },
+      data: { values: [{ y: 23 }] },
+      encoding: { y: { field: "y", type: "quantitative" } },
+    },
+    // Label for median line
+    {
+      mark: { type: "text", align: "left", dx: 4, dy: -6, fontSize: 10, fontWeight: 600, fontStyle: "italic" },
+      data: { values: [{ decade: "1890s", y: 23 }] },
+      encoding: {
+        x: { field: "decade", type: "ordinal" },
+        y: { field: "y", type: "quantitative" },
+        text: { value: "Median ~23 across every decade" },
+        color: { value: GOLD },
+      },
+    },
+    // Annotation: 1950s wider spread
+    {
+      mark: { type: "text", align: "center", dx: 0, dy: -10, fontSize: 10, fontWeight: 600, fontStyle: "italic" },
+      data: { values: [{ decade: "1950s", y: 30 }] },
+      encoding: {
+        x: { field: "decade", type: "ordinal" },
+        y: { field: "y", type: "quantitative" },
+        text: { value: "Wider spread\n1950s boom" },
+        color: { value: MUTED },
       },
     },
   ],
