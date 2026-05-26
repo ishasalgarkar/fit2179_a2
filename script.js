@@ -1130,10 +1130,10 @@ vegaEmbed("#chart-diverging", {
         ],
       },
     },
-    // Delta value labels — beside bars with clear gap
+    // Delta value labels — anchored to bar end, offset outward so never on bar
     {
       mark: { type: "text", fontSize: 11, fontWeight: 600, baseline: "middle", align: "left", dx: 6 },
-      transform: [{ filter: "datum.delta >= 0" }],
+      transform: [{ filter: "datum.delta > 0" }],
       encoding: {
         y: { field: "Sport", type: "nominal", sort: { field: "delta", order: "descending" } },
         x: { field: "delta", type: "quantitative" },
@@ -1149,6 +1149,16 @@ vegaEmbed("#chart-diverging", {
         x: { field: "delta", type: "quantitative" },
         text: { field: "delta", type: "quantitative", format: "+.1f" },
         color: { value: BRONZE },
+      },
+    },
+    {
+      mark: { type: "text", fontSize: 11, fontWeight: 600, baseline: "middle", align: "left", dx: 6 },
+      transform: [{ filter: "datum.delta == 0" }],
+      encoding: {
+        y: { field: "Sport", type: "nominal", sort: { field: "delta", order: "descending" } },
+        x: { datum: 0 },
+        text: { value: "+0.0" },
+        color: { value: MUTED },
       },
     },
     // Annotation for the largest surge — placed below Swimming bar
@@ -1408,25 +1418,25 @@ vegaEmbed(
           ],
         },
       },
-      // Medal count label beside dot — split into two layers for clean alignment
+      // Medal count label — anchored to zero line, offset to sit just beside each dot
       {
-        mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle", align: "left", dx: 16 },
-        transform: [{ filter: "datum.delta >= 0" }],
-        encoding: {
-          y: { field: "city", type: "nominal", sort: { field: "year", order: "ascending" } },
-          x: { field: "delta", type: "quantitative" },
-          text: { field: "aus_medals", type: "quantitative" },
-          color: { condition: { test: "datum.host == true", value: GOLD }, value: TEXT },
-        },
-      },
-      {
-        mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle", align: "right", dx: -16 },
+        mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle", align: "right", dx: -8 },
         transform: [{ filter: "datum.delta < 0" }],
         encoding: {
           y: { field: "city", type: "nominal", sort: { field: "year", order: "ascending" } },
-          x: { field: "delta", type: "quantitative" },
+          x: { datum: 0 },
           text: { field: "aus_medals", type: "quantitative" },
-          color: { value: TEXT },
+          color: { value: MUTED },
+        },
+      },
+      {
+        mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle", align: "left", dx: 8 },
+        transform: [{ filter: "datum.delta >= 0" }],
+        encoding: {
+          y: { field: "city", type: "nominal", sort: { field: "year", order: "ascending" } },
+          x: { datum: 0 },
+          text: { field: "aus_medals", type: "quantitative" },
+          color: { condition: { test: "datum.host == true", value: GOLD }, value: MUTED },
         },
       },
       // Year label pinned to the far left
