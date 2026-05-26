@@ -1224,12 +1224,11 @@ vegaEmbed("#chart-heatmap", {
         color: { condition: { test: "datum.medal_count >= 24", value: "#1a1a1a" }, value: "rgba(255,255,255,0.8)" },
       },
     },
-    // Gold outline on peak decade per sport
+    // Gold outline on peak decade per sport — uses pre-computed isPeak field
     {
       mark: { type: "rect", filled: false, stroke: GOLD, strokeWidth: 2, cornerRadius: 2 },
       transform: [
-        { joinaggregate: [{ op: "max", field: "medal_count", as: "max_count" }], groupby: ["Sport"] },
-        { filter: "datum.medal_count == datum.max_count && datum.medal_count > 0" },
+        { filter: "datum.isPeak == true" },
       ],
       encoding: {
         x: {
