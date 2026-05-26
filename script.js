@@ -591,6 +591,9 @@ const TOPO = "https://cdn.jsdelivr.net/npm/vega-datasets@2/data/world-110m.json"
 // ════════════════════════════════════════════════════════════════════════════
 // MAP 1 — World total medals choropleth
 // ════════════════════════════════════════════════════════════════════════════
+// Render all Vega-Lite charts after DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+
 vegaEmbed("#map-world", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 420, config: CFG,
@@ -1007,7 +1010,7 @@ vegaEmbed("#chart-gold-sport", {
   nodeColors["Bronze"] = "#C07A45";
 
   function render() {
-    const container = document.getElementById("chart-sport-all");
+    const container = document.getElementById("chart-sankey") || document.getElementById("chart-sport-all");
     if (!container) return;
     container.innerHTML = "";
 
@@ -1742,6 +1745,9 @@ vegaEmbed(
 // ════════════════════════════════════════════════════════════════════════════
 // SANKEY — Medal flow: Era → Sport → Medal Type  (pure D3/SVG, no Vega-Lite)
 // ════════════════════════════════════════════════════════════════════════════
+
+}); // end DOMContentLoaded
+
 (function buildSankey() {
   const el = document.getElementById("chart-sankey");
   if (!el) return;
