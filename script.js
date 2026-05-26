@@ -1688,6 +1688,18 @@ vegaEmbed(
     l.th = (l.v / tTotal) * tn.h;
   });
 
+  // ── Custom white tooltip ─────────────────────────────────────────────────
+  const s2tip = document.createElement("div");
+  s2tip.style.cssText = [
+    "position:fixed","background:#fff","color:#111","border-radius:8px",
+    "padding:10px 14px","font-family:Poppins,sans-serif","font-size:13px",
+    "line-height:1.6","box-shadow:0 4px 20px rgba(0,0,0,0.18)",
+    "pointer-events:none","opacity:0","transition:opacity 0.15s",
+    "z-index:9999","min-width:140px",
+  ].join(";");
+  document.body.appendChild(s2tip);
+  function s2move(e) { s2tip.style.left=(e.clientX+14)+"px"; s2tip.style.top=(e.clientY-10)+"px"; }
+
   // ── SVG ───────────────────────────────────────────────────────────────────
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("width", W);
@@ -1717,13 +1729,13 @@ vegaEmbed(
     path.setAttribute("fill", sn.color);
     path.setAttribute("opacity", "0.3");
     path.style.transition = "opacity 0.2s";
-    path.addEventListener("mouseenter", () => path.setAttribute("opacity", "0.65"));
-    path.addEventListener("mouseleave", () => path.setAttribute("opacity", "0.3"));
+    path.style.cursor = "pointer";
 
-    // Tooltip
-    const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
-    title.textContent = `${sn.name.replace("\n", " ")} → ${tn.name}: ${l.v} medals`;
-    path.appendChild(title);
+    // Custom white tooltip
+    const tipHtml = `<span style="color:#888;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">${sn.name.replace("\n"," ")} → ${tn.name}</span><br><span style="font-weight:700;font-size:15px;color:#111">${l.v}</span> <span style="color:#666">medals</span>`;
+    path.addEventListener("mouseenter", e => { path.setAttribute("opacity","0.65"); s2tip.innerHTML=tipHtml; s2tip.style.opacity="1"; s2move(e); });
+    path.addEventListener("mousemove",  e => s2move(e));
+    path.addEventListener("mouseleave", () => { path.setAttribute("opacity","0.3"); s2tip.style.opacity="0"; });
     g.appendChild(path);
   });
 
@@ -1736,6 +1748,11 @@ vegaEmbed(
     rect.setAttribute("height", Math.max(n.h, 2));
     rect.setAttribute("fill", n.color);
     rect.setAttribute("rx", 3);
+    rect.style.cursor = "pointer";
+    const nHtml = `<span style="color:#888;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">${n.name.replace("\n"," ")}</span><br><span style="font-weight:700;font-size:15px;color:#111">${nodeVal[n.id]}</span> <span style="color:#666">medals</span>`;
+    rect.addEventListener("mouseenter", e => { s2tip.innerHTML=nHtml; s2tip.style.opacity="1"; s2move(e); });
+    rect.addEventListener("mousemove",  e => s2move(e));
+    rect.addEventListener("mouseleave", () => { s2tip.style.opacity="0"; });
     g.appendChild(rect);
 
     const lines = n.name.split("\n");
