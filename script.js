@@ -656,7 +656,7 @@ vegaEmbed("#chart-per-million", {
       mark: { type: "bar", cornerRadiusTopRight: 3, cornerRadiusBottomRight: 3 },
       encoding: {
         y: { field: "country_name", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
-        x: { field: "medals_per_million", type: "quantitative", axis: { title: "Medals per million people", grid: true } },
+        x: { field: "medals_per_million", type: "quantitative", axis: { title: "Medals per million people", grid: true }, scale: { domainMax: 75 } },
         color: { condition: { test: "datum.NOC == 'AUS'", value: GREEN }, value: "#2A3A4A" },
         tooltip: [
           { field: "country_name", title: "Country" },
@@ -672,8 +672,8 @@ vegaEmbed("#chart-per-million", {
       encoding: {
         y: { field: "country_name", type: "nominal", sort: "-x" },
         x: { datum: 0 },
-        text: { value: "Top 10 per capita despite 26M population" },
-        color: { value: "#0d1117" },
+        text: { value: "← top 10 globally" },
+        color: { value: GREEN },
       },
     },
   ],
@@ -928,7 +928,7 @@ vegaEmbed("#chart-gold-sport", {
       mark: { type: "rule", strokeWidth: 2.5, opacity: 0.7 },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 13 } },
-        x: { field: "count", type: "quantitative", axis: { title: "Gold medals", grid: true }, scale: { domainMin: 0 } },
+        x: { field: "count", type: "quantitative", axis: { title: "Gold medals", grid: true }, scale: { domainMin: 0, domainMax: 80 } },
         x2: { datum: 0 },
         color: { condition: { test: "datum.Sport=='Swimming'", value: GOLD }, value: "#3A5060" },
       },
@@ -960,7 +960,7 @@ vegaEmbed("#chart-gold-sport", {
       encoding: {
         y: { field: "Sport", type: "nominal", sort: "-x" },
         x: { field: "count", type: "quantitative" },
-        text: { value: "3× more than Athletics + Cycling" },
+        text: { value: "3× more than next two" },
         color: { value: GOLD },
       },
     },
@@ -1443,12 +1443,12 @@ vegaEmbed("#chart-sydney-scatter", {
     },
     // Diagonal "no change" line label
     {
-      mark: { type: "text", fontSize: 10, fontWeight: 500, fontStyle: "italic", angle: 38, dx: 0, dy: -8 },
-      data: { values: [{ x: 14, y: 14 }] },
+      mark: { type: "text", fontSize: 10, fontWeight: 500, fontStyle: "italic", align: "left", dx: 6, dy: 0 },
+      data: { values: [{ x: 15, y: 13 }] },
       encoding: {
         x: { field: "x", type: "quantitative" },
         y: { field: "y", type: "quantitative" },
-        text: { value: "No home advantage line" },
+        text: { value: "No home advantage" },
         color: { value: MUTED },
       },
     },
@@ -1590,7 +1590,7 @@ vegaEmbed("#chart-ages", {
     // Label for median line
     {
       mark: { type: "text", align: "left", dx: 4, dy: -6, fontSize: 10, fontWeight: 600, fontStyle: "italic" },
-      data: { values: [{ decade: "1890s", y: 28 }] },
+      data: { values: [{ decade: "1890s", y: 55 }] },
       encoding: {
         x: { field: "decade", type: "ordinal" },
         y: { field: "y", type: "quantitative" },
@@ -1601,7 +1601,7 @@ vegaEmbed("#chart-ages", {
     // Annotation: 1950s wider spread
     {
       mark: { type: "text", align: "center", dx: 0, dy: -10, fontSize: 10, fontWeight: 600, fontStyle: "italic" },
-      data: { values: [{ decade: "1950s", y: 45 }] },
+      data: { values: [{ decade: "1950s", y: 52 }] },
       encoding: {
         x: { field: "decade", type: "ordinal" },
         y: { field: "y", type: "quantitative" },
