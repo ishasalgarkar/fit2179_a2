@@ -177,7 +177,8 @@
             Swimming dominates every stream — its gold, silver, and bronze
             flows dwarf every other sport combined.
           </div>
-          <div id="chart-sport-all" style="width:100%;min-height:480px;"></div>
+          <div id="chart-sport-all" style="width:100%;min-height:480px;position:relative;"></div>
+          <div id="sankey-tip" style="position:fixed;display:none;pointer-events:none;z-index:9999;background:#1C2230;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 14px;font-family:Poppins,sans-serif;font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,0.5);min-width:160px;"></div>
           <script>
           (function(){
             var SPORTS=["Swimming","Athletics","Cycling","Rowing","Sailing","Equestrianism","Shooting","Hockey","Canoeing","Diving"];
@@ -193,6 +194,25 @@
               {Sport:"Shooting",Medal:"Bronze",count:6},{Sport:"Shooting",Medal:"Gold",count:5},{Sport:"Shooting",Medal:"Silver",count:5},
               {Sport:"Swimming",Medal:"Bronze",count:82},{Sport:"Swimming",Medal:"Gold",count:60},{Sport:"Swimming",Medal:"Silver",count:67}
             ];
+            var tip=document.getElementById("sankey-tip");
+            function showTip(evt,rows){
+              var h="";
+              rows.forEach(function(r){
+                h+='<div style="display:flex;justify-content:space-between;gap:20px;line-height:1.8;">'
+                  +'<span style="color:#7D8590;font-weight:400;">'+r.label+'</span>'
+                  +'<span style="color:#E6EDF3;font-weight:600;">'+r.value+'</span></div>';
+              });
+              tip.innerHTML=h;
+              tip.style.display="block";
+              moveTip(evt);
+            }
+            function moveTip(evt){
+              var x=evt.clientX+16,y=evt.clientY-10;
+              if(x+tip.offsetWidth>window.innerWidth-10) x=evt.clientX-tip.offsetWidth-10;
+              if(y+tip.offsetHeight>window.innerHeight-10) y=evt.clientY-tip.offsetHeight-10;
+              tip.style.left=x+"px";tip.style.top=y+"px";
+            }
+            function hideTip(){tip.style.display="none";}
             function loadScript(src,cb){var s=document.createElement("script");s.src=src;s.onload=cb;document.head.appendChild(s);}
             function drawSankey(){
               var container=document.getElementById("chart-sport-all");
@@ -200,7 +220,7 @@
               var totalW=container.clientWidth||680;
               var totalH=500;
               var mg={top:12,right:110,bottom:20,left:145};
-              var W=totalW-mg.left-mg.right, H=totalH-mg.top-mg.bottom;
+              var W=totalW-mg.left-mg.right,H=totalH-mg.top-mg.bottom;
               var nodeNames=SPORTS.concat(["Gold","Silver","Bronze"]);
               var ni={};nodeNames.forEach(function(n,i){ni[n]=i;});
               var links=[];
@@ -211,28 +231,52 @@
               function nc(n){return NCOL[n]||NCOL._;}
               var svg=d3.select(container).append("svg").attr("width",totalW).attr("height",totalH).style("background","transparent");
               var g=svg.append("g").attr("transform","translate("+mg.left+","+mg.top+")");
+              // Links
               g.append("g").selectAll("path").data(graph.links).join("path")
                 .attr("d",d3.sankeyLinkHorizontal())
                 .attr("stroke",function(d){return nc(d.source.name);})
                 .attr("stroke-width",function(d){return Math.max(1,d.width);})
-                .attr("fill","none").attr("opacity",0.35)
-                .append("title").text(function(d){return d.source.name+"→"+d.target.name+": "+d.value;});
+                .attr("fill","none").attr("opacity",0.35).style("cursor","pointer")
+                .on("mouseover",function(evt,d){
+                  d3.select(this).attr("opacity",0.65);
+                  showTip(evt,[
+                    {label:"Sport",value:d.source.name},
+                    {label:"Medal",value:d.target.name},
+                    {label:"Medals",value:d.value}
+                  ]);
+                })
+                .on("mousemove",moveTip)
+                .on("mouseout",function(){d3.select(this).attr("opacity",0.35);hideTip();});
+              // Node rects
               var node=g.append("g").selectAll("g").data(graph.nodes).join("g");
               node.append("rect")
                 .attr("x",function(d){return d.x0;}).attr("y",function(d){return d.y0;})
                 .attr("width",function(d){return d.x1-d.x0;}).attr("height",function(d){return Math.max(1,d.y1-d.y0);})
                 .attr("fill",function(d){return nc(d.name);}).attr("rx",3).attr("opacity",0.92)
-                .append("title").text(function(d){return d.name+": "+d.value+" medals";});
+                .style("cursor","pointer")
+                .on("mouseover",function(evt,d){
+                  var isMedal=["Gold","Silver","Bronze"].indexOf(d.name)>=0;
+                  showTip(evt,isMedal
+                    ?[{label:"Medal type",value:d.name},{label:"Total medals",value:d.value}]
+                    :[{label:"Sport",value:d.name},{label:"Total medals",value:d.value}]
+                  );
+                })
+                .on("mousemove",moveTip)
+                .on("mouseout",hideTip);
+              // Sport labels left
               node.filter(function(d){return d.x0<W/2;}).append("text")
                 .attr("x",function(d){return d.x0-10;}).attr("y",function(d){return(d.y0+d.y1)/2;})
                 .attr("dy","0.35em").attr("text-anchor","end")
-                .attr("fill","#E6EDF3").attr("font-family","Poppins,sans-serif").attr("font-size","12px").attr("font-weight","600")
+                .attr("fill","#E6EDF3").attr("font-family","Poppins,sans-serif")
+                .attr("font-size","12px").attr("font-weight","600").style("pointer-events","none")
                 .text(function(d){return d.name;});
+              // Medal labels right
               node.filter(function(d){return d.x0>=W/2;}).append("text")
                 .attr("x",function(d){return d.x1+10;}).attr("y",function(d){return(d.y0+d.y1)/2;})
                 .attr("dy","0.35em").attr("text-anchor","start")
                 .attr("fill",function(d){return nc(d.name);})
                 .attr("font-family","Poppins,sans-serif").attr("font-size","12px").attr("font-weight","700")
+                .style("pointer-events","none")
                 .text(function(d){return d.name+" ("+d.value+")";});
             }
             if(typeof d3==="undefined"){
