@@ -1195,7 +1195,7 @@ vegaEmbed("#chart-heatmap", {
         },
         y: {
           field: "Sport", type: "nominal",
-          sort: { field: "medal_count", order: "descending" },
+          sort: "-x",
           axis: { title: null, labelFontSize: 11 },
         },
         color: {
@@ -1219,7 +1219,7 @@ vegaEmbed("#chart-heatmap", {
           field: "decade", type: "ordinal",
           sort: ["1890s","1900s","1910s","1920s","1930s","1940s","1950s","1960s","1970s","1980s","1990s","2000s","2010s"],
         },
-        y: { field: "Sport", type: "nominal", sort: { field: "medal_count", order: "descending" } },
+        y: { field: "Sport", type: "nominal", sort: "-x" },
         text: { condition: { test: "datum.medal_count > 0", field: "medal_count", type: "quantitative" }, value: "" },
         color: { condition: { test: "datum.medal_count >= 24", value: "#1a1a1a" }, value: "rgba(255,255,255,0.8)" },
       },
@@ -1235,7 +1235,7 @@ vegaEmbed("#chart-heatmap", {
           field: "decade", type: "ordinal",
           sort: ["1890s","1900s","1910s","1920s","1930s","1940s","1950s","1960s","1970s","1980s","1990s","2000s","2010s"],
         },
-        y: { field: "Sport", type: "nominal", sort: { field: "medal_count", order: "descending" } },
+        y: { field: "Sport", type: "nominal", sort: "-x" },
       },
     },
   ],
@@ -1505,7 +1505,7 @@ vegaEmbed("#chart-sydney-paris", {
   data: { values: sydneyParis },
   mark: { type: "bar", cornerRadiusTopRight: 2 },
   encoding: {
-    y: { field: "Sport", type: "nominal", sort: { field: "count", order: "descending" }, axis: { title: null, labelFontSize: 12 } },
+    y: { field: "Sport", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
     x: { field: "count", type: "quantitative", axis: { title: "Medals", grid: true } },
     color: {
       field: "games", type: "nominal",
@@ -1534,7 +1534,7 @@ vegaEmbed("#chart-paris", {
   },
   mark: { type: "bar" },
   encoding: {
-    y: { field: "sport", type: "nominal", sort: { field: "count", order: "descending" }, axis: { title: null, labelFontSize: 12 } },
+    y: { field: "sport", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
     x: { field: "count", type: "quantitative", stack: "zero", axis: { title: "Medals", grid: true } },
     color: {
       field: "Medal", type: "nominal",
@@ -1659,7 +1659,7 @@ vegaEmbed(
           y: {
             field: "city",
             type: "nominal",
-            sort: { field: "year", order: "ascending" },
+            sort: "x",
             axis: { title: null, labelFontSize: 12, labelFontWeight: 500 },
           },
           x: { datum: 0 },
@@ -1677,7 +1677,7 @@ vegaEmbed(
           y: {
             field: "city",
             type: "nominal",
-            sort: { field: "year", order: "ascending" },
+            sort: "x",
           },
           x: {
             field: "delta",
@@ -1709,7 +1709,7 @@ vegaEmbed(
           { filter: "datum.delta >= 0" },
         ],
         encoding: {
-          y: { field: "city", type: "nominal", sort: { field: "year", order: "ascending" } },
+          y: { field: "city", type: "nominal", sort: "x" },
           x: { field: "labelX", type: "quantitative" },
           text: { field: "aus_medals", type: "quantitative" },
           color: { value: TEXT },
@@ -1723,7 +1723,7 @@ vegaEmbed(
           { filter: "datum.delta < 0" },
         ],
         encoding: {
-          y: { field: "city", type: "nominal", sort: { field: "year", order: "ascending" } },
+          y: { field: "city", type: "nominal", sort: "x" },
           x: { field: "labelX", type: "quantitative" },
           text: { field: "aus_medals", type: "quantitative" },
           color: { value: TEXT },
@@ -1742,7 +1742,7 @@ vegaEmbed(
           y: {
             field: "city",
             type: "nominal",
-            sort: { field: "year", order: "ascending" },
+            sort: "x",
           },
           x: { datum: -22 },
           text: { field: "year", type: "quantitative", format: "d" },
