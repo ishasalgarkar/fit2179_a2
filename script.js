@@ -981,6 +981,24 @@ vegaEmbed("#chart-gold-sport", {
       links: links.map(l => ({ ...l })),
     });
 
+    // ── Custom HTML tooltip ──────────────────────────────────────────────────
+    let tip = document.getElementById("__sankey_tip__");
+    if (!tip) {
+      tip = document.createElement("div");
+      tip.id = "__sankey_tip__";
+      tip.style.cssText = [
+        "position:fixed","background:#fff","color:#111","border-radius:8px",
+        "padding:10px 14px","font-family:Poppins,sans-serif","font-size:13px",
+        "line-height:1.6","box-shadow:0 4px 20px rgba(0,0,0,0.18)",
+        "pointer-events:none","opacity:0","transition:opacity 0.15s",
+        "z-index:9999","min-width:140px",
+      ].join(";");
+      document.body.appendChild(tip);
+    }
+    function showTip(e, html) { tip.innerHTML = html; tip.style.opacity = "1"; moveTip(e); }
+    function moveTip(e) { tip.style.left = (e.clientX + 14) + "px"; tip.style.top = (e.clientY - 10) + "px"; }
+    function hideTip() { tip.style.opacity = "0"; }
+
     // Draw links
     const linkPath = d3.sankeyLinkHorizontal();
     svg.append("g").selectAll("path")
@@ -994,8 +1012,10 @@ vegaEmbed("#chart-gold-sport", {
         .attr("stroke-width", d => Math.max(1, d.width))
         .attr("fill", "none")
         .attr("opacity", 0.38)
-        .append("title")
-          .text(d => `${d.source.name} → ${d.target.name}: ${d.value} medals`);
+        .style("cursor", "pointer")
+        .on("mouseenter", function(e, d) { d3.select(this).attr("opacity", 0.7); showTip(e, `<span style="color:#888;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">${d.source.name} → ${d.target.name}</span><br><span style="font-weight:700;font-size:15px">${d.value}</span> <span style="color:#666">medals</span>`); })
+        .on("mousemove", function(e) { moveTip(e); })
+        .on("mouseleave", function() { d3.select(this).attr("opacity", 0.38); hideTip(); });
 
     // Draw nodes
     const node = svg.append("g").selectAll("g")
@@ -1010,8 +1030,10 @@ vegaEmbed("#chart-gold-sport", {
       .attr("fill", d => nodeColors[d.name] || "#2DD4A0")
       .attr("opacity", 0.92)
       .attr("rx", 3)
-      .append("title")
-        .text(d => `${d.name}: ${d.value} medals`);
+      .style("cursor", "pointer")
+      .on("mouseenter", function(e, d) { showTip(e, `<span style="color:#888;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">${d.name}</span><br><span style="font-weight:700;font-size:15px">${d.value}</span> <span style="color:#666">medals</span>`); })
+      .on("mousemove", function(e) { moveTip(e); })
+      .on("mouseleave", function() { hideTip(); });
 
     // Node labels — sports on left, medal types on right
     node.append("text")
@@ -1660,21 +1682,6 @@ vegaEmbed(
     l.th = (l.v / tTotal) * tn.h;
   });
 
-  // ── Custom HTML tooltip ───────────────────────────────────────────────────
-  const sankeyTip = document.createElement("div");
-  sankeyTip.style.cssText = [
-    "position:fixed","background:#fff","color:#111","border-radius:8px",
-    "padding:10px 14px","font-family:Poppins,sans-serif","font-size:13px",
-    "line-height:1.6","box-shadow:0 4px 20px rgba(0,0,0,0.18)",
-    "pointer-events:none","opacity:0","transition:opacity 0.15s",
-    "z-index:9999","min-width:140px",
-  ].join(";");
-  document.body.appendChild(sankeyTip);
-  function sankeyMoveTip(e) {
-    sankeyTip.style.left = (e.clientX + 14) + "px";
-    sankeyTip.style.top  = (e.clientY - 10) + "px";
-  }
-
   // ── SVG ───────────────────────────────────────────────────────────────────
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("width", W);
@@ -1704,12 +1711,13 @@ vegaEmbed(
     path.setAttribute("fill", sn.color);
     path.setAttribute("opacity", "0.3");
     path.style.transition = "opacity 0.2s";
-    path.style.cursor = "pointer";
+    path.addEventListener("mouseenter", () => path.setAttribute("opacity", "0.65"));
+    path.addEventListener("mouseleave", () => path.setAttribute("opacity", "0.3"));
 
-    const tipHtml = `<span style="color:#888;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">${sn.name.replace("\n"," ")} → ${tn.name}</span><br><span style="font-weight:700;font-size:15px;color:#111">${l.v}</span> <span style="color:#666">medals</span>`;
-    path.addEventListener("mouseenter", e => { path.setAttribute("opacity", "0.65"); sankeyTip.innerHTML = tipHtml; sankeyTip.style.opacity = "1"; sankeyMoveTip(e); });
-    path.addEventListener("mousemove",  e => sankeyMoveTip(e));
-    path.addEventListener("mouseleave", () => { path.setAttribute("opacity", "0.3"); sankeyTip.style.opacity = "0"; });
+    // Tooltip
+    const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+    title.textContent = `${sn.name.replace("\n", " ")} → ${tn.name}: ${l.v} medals`;
+    path.appendChild(title);
     g.appendChild(path);
   });
 
@@ -1722,11 +1730,6 @@ vegaEmbed(
     rect.setAttribute("height", Math.max(n.h, 2));
     rect.setAttribute("fill", n.color);
     rect.setAttribute("rx", 3);
-    rect.style.cursor = "pointer";
-    const nodeTipHtml = `<span style="color:#888;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">${n.name.replace("\n"," ")}</span><br><span style="font-weight:700;font-size:15px;color:#111">${nodeVal[n.id]}</span> <span style="color:#666">medals</span>`;
-    rect.addEventListener("mouseenter", e => { sankeyTip.innerHTML = nodeTipHtml; sankeyTip.style.opacity = "1"; sankeyMoveTip(e); });
-    rect.addEventListener("mousemove",  e => sankeyMoveTip(e));
-    rect.addEventListener("mouseleave", () => { sankeyTip.style.opacity = "0"; });
     g.appendChild(rect);
 
     const lines = n.name.split("\n");
