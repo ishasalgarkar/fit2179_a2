@@ -1660,6 +1660,21 @@ vegaEmbed(
     l.th = (l.v / tTotal) * tn.h;
   });
 
+  // ── Custom HTML tooltip ───────────────────────────────────────────────────
+  const sankeyTip = document.createElement("div");
+  sankeyTip.style.cssText = [
+    "position:fixed","background:#fff","color:#111","border-radius:8px",
+    "padding:10px 14px","font-family:Poppins,sans-serif","font-size:13px",
+    "line-height:1.6","box-shadow:0 4px 20px rgba(0,0,0,0.18)",
+    "pointer-events:none","opacity:0","transition:opacity 0.15s",
+    "z-index:9999","min-width:140px",
+  ].join(";");
+  document.body.appendChild(sankeyTip);
+  function sankeyMoveTip(e) {
+    sankeyTip.style.left = (e.clientX + 14) + "px";
+    sankeyTip.style.top  = (e.clientY - 10) + "px";
+  }
+
   // ── SVG ───────────────────────────────────────────────────────────────────
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("width", W);
@@ -1671,39 +1686,6 @@ vegaEmbed(
   const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
   g.setAttribute("transform", `translate(${PAD.left},${PAD.top})`);
   svg.appendChild(g);
-
-  // ── Custom HTML tooltip ───────────────────────────────────────────────────
-  const tip = document.createElement("div");
-  tip.style.cssText = [
-    "position:fixed",
-    "background:#fff",
-    "color:#111",
-    "border-radius:8px",
-    "padding:10px 14px",
-    "font-family:Poppins,sans-serif",
-    "font-size:13px",
-    "line-height:1.6",
-    "box-shadow:0 4px 20px rgba(0,0,0,0.18)",
-    "pointer-events:none",
-    "opacity:0",
-    "transition:opacity 0.15s",
-    "z-index:9999",
-    "min-width:140px",
-  ].join(";");
-  document.body.appendChild(tip);
-
-  function showTip(e, html) {
-    tip.innerHTML = html;
-    tip.style.opacity = "1";
-    moveTip(e);
-  }
-  function moveTip(e) {
-    const x = e.clientX + 14;
-    const y = e.clientY - 10;
-    tip.style.left = x + "px";
-    tip.style.top  = y + "px";
-  }
-  function hideTip() { tip.style.opacity = "0"; }
 
   // Draw links
   links.forEach(l => {
@@ -1723,10 +1705,11 @@ vegaEmbed(
     path.setAttribute("opacity", "0.3");
     path.style.transition = "opacity 0.2s";
     path.style.cursor = "pointer";
-    const tipHtml = `<span style="color:#666;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">${sn.name.replace("\n"," ")} → ${tn.name}</span><br><span style="font-weight:700;font-size:15px">${l.v}</span> <span style="color:#666">medals</span>`;
-    path.addEventListener("mouseenter", e => { path.setAttribute("opacity", "0.65"); showTip(e, tipHtml); });
-    path.addEventListener("mousemove",  e => moveTip(e));
-    path.addEventListener("mouseleave", () => { path.setAttribute("opacity", "0.3"); hideTip(); });
+
+    const tipHtml = `<span style="color:#888;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">${sn.name.replace("\n"," ")} → ${tn.name}</span><br><span style="font-weight:700;font-size:15px;color:#111">${l.v}</span> <span style="color:#666">medals</span>`;
+    path.addEventListener("mouseenter", e => { path.setAttribute("opacity", "0.65"); sankeyTip.innerHTML = tipHtml; sankeyTip.style.opacity = "1"; sankeyMoveTip(e); });
+    path.addEventListener("mousemove",  e => sankeyMoveTip(e));
+    path.addEventListener("mouseleave", () => { path.setAttribute("opacity", "0.3"); sankeyTip.style.opacity = "0"; });
     g.appendChild(path);
   });
 
@@ -1740,10 +1723,10 @@ vegaEmbed(
     rect.setAttribute("fill", n.color);
     rect.setAttribute("rx", 3);
     rect.style.cursor = "pointer";
-    const nodeTipHtml = `<span style="color:#666;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">${n.name.replace("\n"," ")}</span><br><span style="font-weight:700;font-size:15px">${nodeVal[n.id]}</span> <span style="color:#666">medals</span>`;
-    rect.addEventListener("mouseenter", e => showTip(e, nodeTipHtml));
-    rect.addEventListener("mousemove",  e => moveTip(e));
-    rect.addEventListener("mouseleave", () => hideTip());
+    const nodeTipHtml = `<span style="color:#888;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">${n.name.replace("\n"," ")}</span><br><span style="font-weight:700;font-size:15px;color:#111">${nodeVal[n.id]}</span> <span style="color:#666">medals</span>`;
+    rect.addEventListener("mouseenter", e => { sankeyTip.innerHTML = nodeTipHtml; sankeyTip.style.opacity = "1"; sankeyMoveTip(e); });
+    rect.addEventListener("mousemove",  e => sankeyMoveTip(e));
+    rect.addEventListener("mouseleave", () => { sankeyTip.style.opacity = "0"; });
     g.appendChild(rect);
 
     const lines = n.name.split("\n");
