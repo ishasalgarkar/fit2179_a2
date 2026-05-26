@@ -121,7 +121,7 @@ const medalsByYear = [
   { Year: 2016, Medal: "Silver", count: 11 },
 ];
  
-const perMillion = [
+const perMillionSorted = [
   { NOC: "FIN", total_medals: 310, country_name: "Finland", medals_per_million: 56.41 },
   { NOC: "SWE", total_medals: 513, country_name: "Sweden", medals_per_million: 51.7 },
   { NOC: "HUN", total_medals: 504, country_name: "Hungary", medals_per_million: 51.64 },
@@ -584,7 +584,7 @@ const divergingData = sydneyData.map((d) => ({
   delta: Math.round((d.sydney_2000 - d.other_games_avg) * 10) / 10,
   sydney: d.sydney_2000,
   avg: d.other_games_avg,
-}));
+})).sort((a, b) => a.delta - b.delta);
  
 const TOPO = "https://cdn.jsdelivr.net/npm/vega-datasets@2/data/world-110m.json";
  
@@ -653,12 +653,12 @@ vegaEmbed("#map-per-million", {
 vegaEmbed("#chart-per-million", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 440, config: CFG,
-  data: { values: perMillion },
+  data: { values: [...perMillionSorted].sort((a,b) => b.medals_per_million - a.medals_per_million) },
   layer: [
     {
       mark: { type: "bar", cornerRadiusTopRight: 3, cornerRadiusBottomRight: 3 },
       encoding: {
-        y: { field: "country_name", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
+        y: { field: "country_name", type: "nominal", sort: null, axis: { title: null, labelFontSize: 12 } },
         x: { field: "medals_per_million", type: "quantitative", axis: { title: "Medals per million people", grid: true }, scale: { domainMax: 75 } },
         color: { condition: { test: "datum.NOC == 'AUS'", value: GREEN }, value: "#2A3A4A" },
         tooltip: [
@@ -673,7 +673,7 @@ vegaEmbed("#chart-per-million", {
       mark: { type: "text", align: "left", dx: 6, fontSize: 11, fontWeight: 700, fontStyle: "italic" },
       transform: [{ filter: "datum.NOC == 'AUS'" }],
       encoding: {
-        y: { field: "country_name", type: "nominal", sort: "-x" },
+        y: { field: "country_name", type: "nominal", sort: null },
         x: { datum: 0 },
         text: { value: "← top 10 globally" },
         color: { value: GREEN },
@@ -924,13 +924,13 @@ vegaEmbed("#chart-rank", {
 vegaEmbed("#chart-gold-sport", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 660, config: CFG,
-  data: { values: bySport.filter(d => d.Medal === "Gold") },
+  data: { values: bySport.filter(d => d.Medal === "Gold").sort((a,b) => b.count - a.count) },
   layer: [
     // Stem: rule from 0 to count
     {
       mark: { type: "rule", strokeWidth: 2.5, opacity: 0.7 },
       encoding: {
-        y: { field: "Sport", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 13 } },
+        y: { field: "Sport", type: "nominal", sort: null, axis: { title: null, labelFontSize: 13 } },
         x: { field: "count", type: "quantitative", axis: { title: "Gold medals", grid: true }, scale: { domainMin: 0, domainMax: 80 } },
         x2: { datum: 0 },
         color: { condition: { test: "datum.Sport=='Swimming'", value: GOLD }, value: "#3A5060" },
@@ -940,7 +940,7 @@ vegaEmbed("#chart-gold-sport", {
     {
       mark: { type: "point", filled: true, size: 80, opacity: 1 },
       encoding: {
-        y: { field: "Sport", type: "nominal", sort: "-x" },
+        y: { field: "Sport", type: "nominal", sort: null },
         x: { field: "count", type: "quantitative" },
         color: { condition: { test: "datum.Sport=='Swimming'", value: GOLD }, value: GREEN },
         tooltip: [{ field: "Sport" }, { field: "count", title: "Gold medals" }],
@@ -950,7 +950,7 @@ vegaEmbed("#chart-gold-sport", {
     {
       mark: { type: "text", dx: 16, fontSize: 12, fontWeight: 700, align: "left" },
       encoding: {
-        y: { field: "Sport", type: "nominal", sort: "-x" },
+        y: { field: "Sport", type: "nominal", sort: null },
         x: { field: "count", type: "quantitative" },
         text: { field: "count", type: "quantitative" },
         color: { condition: { test: "datum.Sport=='Swimming'", value: GOLD }, value: TEXT },
@@ -961,7 +961,7 @@ vegaEmbed("#chart-gold-sport", {
       mark: { type: "text", align: "left", dx: 8, dy: -14, fontSize: 11, fontWeight: 600, fontStyle: "italic", clip: false },
       data: { values: [{ Sport: "Swimming", count: 62 }] },
       encoding: {
-        y: { field: "Sport", type: "nominal", sort: "-x" },
+        y: { field: "Sport", type: "nominal", sort: null },
         x: { field: "count", type: "quantitative" },
         text: { value: "3× more than next two" },
         color: { value: GOLD },
@@ -1195,7 +1195,7 @@ vegaEmbed("#chart-heatmap", {
         },
         y: {
           field: "Sport", type: "nominal",
-          sort: "-x",
+          sort: null,
           axis: { title: null, labelFontSize: 11 },
         },
         color: {
@@ -1219,7 +1219,7 @@ vegaEmbed("#chart-heatmap", {
           field: "decade", type: "ordinal",
           sort: ["1890s","1900s","1910s","1920s","1930s","1940s","1950s","1960s","1970s","1980s","1990s","2000s","2010s"],
         },
-        y: { field: "Sport", type: "nominal", sort: "-x" },
+        y: { field: "Sport", type: "nominal", sort: null },
         text: { condition: { test: "datum.medal_count > 0", field: "medal_count", type: "quantitative" }, value: "" },
         color: { condition: { test: "datum.medal_count >= 24", value: "#1a1a1a" }, value: "rgba(255,255,255,0.8)" },
       },
@@ -1235,7 +1235,7 @@ vegaEmbed("#chart-heatmap", {
           field: "decade", type: "ordinal",
           sort: ["1890s","1900s","1910s","1920s","1930s","1940s","1950s","1960s","1970s","1980s","1990s","2000s","2010s"],
         },
-        y: { field: "Sport", type: "nominal", sort: "-x" },
+        y: { field: "Sport", type: "nominal", sort: null },
       },
     },
   ],
@@ -1347,7 +1347,7 @@ vegaEmbed("#chart-diverging", {
       encoding: {
         y: {
           field: "Sport", type: "nominal",
-          sort: "-x",
+          sort: null,
           axis: { title: null, labelFontSize: 13 },
         },
         x: {
