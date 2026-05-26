@@ -651,17 +651,32 @@ vegaEmbed("#chart-per-million", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 440, config: CFG,
   data: { values: perMillion },
-  mark: { type: "bar", cornerRadiusTopRight: 3, cornerRadiusBottomRight: 3 },
-  encoding: {
-    y: { field: "country_name", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
-    x: { field: "medals_per_million", type: "quantitative", axis: { title: "Medals per million people", grid: true } },
-    color: { condition: { test: "datum.NOC == 'AUS'", value: GREEN }, value: "#2A3A4A" },
-    tooltip: [
-      { field: "country_name", title: "Country" },
-      { field: "medals_per_million", title: "Per million", format: ".1f" },
-      { field: "total_medals", title: "Total medals" },
-    ],
-  },
+  layer: [
+    {
+      mark: { type: "bar", cornerRadiusTopRight: 3, cornerRadiusBottomRight: 3 },
+      encoding: {
+        y: { field: "country_name", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
+        x: { field: "medals_per_million", type: "quantitative", axis: { title: "Medals per million people", grid: true } },
+        color: { condition: { test: "datum.NOC == 'AUS'", value: GREEN }, value: "#2A3A4A" },
+        tooltip: [
+          { field: "country_name", title: "Country" },
+          { field: "medals_per_million", title: "Per million", format: ".1f" },
+          { field: "total_medals", title: "Total medals" },
+        ],
+      },
+    },
+    // Annotation label for Australia
+    {
+      mark: { type: "text", align: "left", dx: 6, fontSize: 11, fontWeight: 700, fontStyle: "italic" },
+      transform: [{ filter: "datum.NOC == 'AUS'" }],
+      encoding: {
+        y: { field: "country_name", type: "nominal", sort: "-x" },
+        x: { field: "medals_per_million", type: "quantitative" },
+        text: { value: "← Australia: top 10 per capita despite 26M population" },
+        color: { value: GREEN },
+      },
+    },
+  ],
 }, O);
  
 // ════════════════════════════════════════════════════════════════════════════
@@ -916,6 +931,17 @@ vegaEmbed("#chart-gold-sport", {
         color: { condition: { test: "datum.Sport=='Swimming'", value: GOLD }, value: TEXT },
       },
     },
+    // Annotation: Swimming dominance
+    {
+      mark: { type: "text", align: "left", dx: 8, fontSize: 11, fontWeight: 600, fontStyle: "italic" },
+      data: { values: [{ Sport: "Swimming", count: 62 }] },
+      encoding: {
+        y: { field: "Sport", type: "nominal", sort: "-x" },
+        x: { field: "count", type: "quantitative" },
+        text: { value: "3× more golds than Athletics + Cycling combined" },
+        color: { value: GOLD },
+      },
+    },
   ],
 }, O);
  
@@ -1104,6 +1130,23 @@ vegaEmbed("#chart-summer-winter", {
         color: { value: TEXT },
       },
     },
+    // Centre annotation
+    {
+      mark: { type: "text", fontSize: 22, fontWeight: 800, dy: -12 },
+      data: { values: [{ label: "98.8%" }] },
+      encoding: {
+        text: { field: "label" },
+        color: { value: GREEN },
+      },
+    },
+    {
+      mark: { type: "text", fontSize: 11, fontWeight: 400, dy: 14 },
+      data: { values: [{ label: "Summer medals" }] },
+      encoding: {
+        text: { field: "label" },
+        color: { value: MUTED },
+      },
+    },
   ],
 }, O);
  
@@ -1234,6 +1277,28 @@ vegaEmbed("#chart-slope", {
         },
       },
     },
+    // Annotation: Swimming 1970s peak
+    {
+      mark: { type: "text", fontSize: 10, fontWeight: 600, fontStyle: "italic", align: "center", dy: -16 },
+      data: { values: [{ era: "1970s", share: 82 }] },
+      encoding: {
+        x: { field: "era", type: "ordinal", sort: ["1970s","Sydney 2000","Post-Sydney","Paris 2024"] },
+        y: { field: "share", type: "quantitative" },
+        text: { value: "Pre-AIS: Swimming\nwas 82% of all medals" },
+        color: { value: GOLD },
+      },
+    },
+    // Annotation: Athletics Paris surge
+    {
+      mark: { type: "text", fontSize: 10, fontWeight: 600, fontStyle: "italic", align: "right", dx: -8, dy: -14 },
+      data: { values: [{ era: "Paris 2024", share: 13 }] },
+      encoding: {
+        x: { field: "era", type: "ordinal", sort: ["1970s","Sydney 2000","Post-Sydney","Paris 2024"] },
+        y: { field: "share", type: "quantitative" },
+        text: { value: "Athletics biggest\nshare gain" },
+        color: { value: GREEN },
+      },
+    },
   ],
 }, O);
  
@@ -1352,6 +1417,28 @@ vegaEmbed("#chart-sydney-scatter", {
         text: { field: "Sport" },
         color: { value: MUTED },
         opacity: { condition: { test: "datum.sydney_2000>=3", value: 1 }, value: 0 },
+      },
+    },
+    // Diagonal "no change" line label
+    {
+      mark: { type: "text", fontSize: 10, fontWeight: 500, fontStyle: "italic", angle: 38, dx: 0, dy: -8 },
+      data: { values: [{ x: 14, y: 14 }] },
+      encoding: {
+        x: { field: "x", type: "quantitative" },
+        y: { field: "y", type: "quantitative" },
+        text: { value: "No home advantage line" },
+        color: { value: MUTED },
+      },
+    },
+    // Swimming callout
+    {
+      mark: { type: "text", fontSize: 11, fontWeight: 700, fontStyle: "italic", align: "left", dx: 8 },
+      data: { values: [{ x: 14.5, y: 18 }] },
+      encoding: {
+        x: { field: "x", type: "quantitative" },
+        y: { field: "y", type: "quantitative" },
+        text: { value: "Swimming: already dominant,\nstill surged further at home" },
+        color: { value: GOLD },
       },
     },
   ],
