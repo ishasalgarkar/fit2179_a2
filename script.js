@@ -655,7 +655,7 @@ vegaEmbed("#chart-per-million", {
     {
       mark: { type: "bar", cornerRadiusTopRight: 3, cornerRadiusBottomRight: 3 },
       encoding: {
-        y: { field: "country_name", type: "nominal", sort: "x", axis: { title: null, labelFontSize: 12 } },
+        y: { field: "country_name", type: "nominal", sort: "-x", axis: { title: null, labelFontSize: 12 } },
         x: { field: "medals_per_million", type: "quantitative", axis: { title: "Medals per million people", grid: true } },
         color: { condition: { test: "datum.NOC == 'AUS'", value: GREEN }, value: "#2A3A4A" },
         tooltip: [
@@ -670,7 +670,7 @@ vegaEmbed("#chart-per-million", {
       mark: { type: "text", align: "left", dx: 6, fontSize: 11, fontWeight: 700, fontStyle: "italic" },
       transform: [{ filter: "datum.NOC == 'AUS'" }],
       encoding: {
-        y: { field: "country_name", type: "nominal", sort: "x" },
+        y: { field: "country_name", type: "nominal", sort: "-x" },
         x: { datum: 0 },
         text: { value: "Top 10 per capita despite 26M population" },
         color: { value: "#0d1117" },
@@ -955,12 +955,12 @@ vegaEmbed("#chart-gold-sport", {
     },
     // Annotation: Swimming dominance — above the dot
     {
-      mark: { type: "text", align: "left", dx: 8, dy: -14, fontSize: 11, fontWeight: 600, fontStyle: "italic" },
+      mark: { type: "text", align: "left", dx: 8, dy: -14, fontSize: 11, fontWeight: 600, fontStyle: "italic", clip: false },
       data: { values: [{ Sport: "Swimming", count: 62 }] },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: "-x" },
         x: { field: "count", type: "quantitative" },
-        text: { value: "3× more golds than Athletics + Cycling combined" },
+        text: { value: "3× more than Athletics + Cycling" },
         color: { value: GOLD },
       },
     },
@@ -1452,14 +1452,14 @@ vegaEmbed("#chart-sydney-scatter", {
         color: { value: MUTED },
       },
     },
-    // Swimming callout — sits right beside the Swimming dot
+    // Swimming callout — below and right of dot to avoid clashing with "Swimming" label
     {
-      mark: { type: "text", fontSize: 11, fontWeight: 700, fontStyle: "italic", align: "left", dx: 10, dy: -8 },
+      mark: { type: "text", fontSize: 11, fontWeight: 700, fontStyle: "italic", align: "left", dx: 10, dy: 18 },
       data: { values: [{ x: 7.5, y: 18 }] },
       encoding: {
         x: { field: "x", type: "quantitative" },
         y: { field: "y", type: "quantitative" },
-        text: { value: "Already dominant, still\nsurged further at home" },
+        text: { value: "Already dominant, still surged further at home" },
         color: { value: GOLD },
       },
     },
@@ -1590,7 +1590,7 @@ vegaEmbed("#chart-ages", {
     // Label for median line
     {
       mark: { type: "text", align: "left", dx: 4, dy: -6, fontSize: 10, fontWeight: 600, fontStyle: "italic" },
-      data: { values: [{ decade: "1890s", y: 23 }] },
+      data: { values: [{ decade: "1890s", y: 28 }] },
       encoding: {
         x: { field: "decade", type: "ordinal" },
         y: { field: "y", type: "quantitative" },
@@ -1601,11 +1601,11 @@ vegaEmbed("#chart-ages", {
     // Annotation: 1950s wider spread
     {
       mark: { type: "text", align: "center", dx: 0, dy: -10, fontSize: 10, fontWeight: 600, fontStyle: "italic" },
-      data: { values: [{ decade: "1950s", y: 30 }] },
+      data: { values: [{ decade: "1950s", y: 45 }] },
       encoding: {
         x: { field: "decade", type: "ordinal" },
         y: { field: "y", type: "quantitative" },
-        text: { value: "Wider spread\n1950s boom" },
+        text: { value: "Wider spread 1950s boom" },
         color: { value: MUTED },
       },
     },
