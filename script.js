@@ -1457,3 +1457,187 @@ vegaEmbed(
   },
   O,
 );
+
+// ════════════════════════════════════════════════════════════════════════════
+// SANKEY — Medal flow: Era → Sport → Medal Type  (pure D3/SVG, no Vega-Lite)
+// ════════════════════════════════════════════════════════════════════════════
+(function buildSankey() {
+  const el = document.getElementById("chart-sankey");
+  if (!el) return;
+
+  const W = el.offsetWidth || 860;
+  const H = 500;
+  const PAD = { top: 24, right: 180, bottom: 24, left: 180 };
+  const iW = W - PAD.left - PAD.right;
+  const iH = H - PAD.top - PAD.bottom;
+  const NODE_W = 16;
+  const GAP = 14;
+
+  // ── Data ──────────────────────────────────────────────────────────────────
+  // Nodes: col 0 = Era, col 1 = Sport, col 2 = Medal type
+  const nodes = [
+    { id: 0, name: "Early Era\n1896–1956",   col: 0, color: "#F0B429" },
+    { id: 1, name: "Growth Era\n1960–1988",  col: 0, color: "#2DD4A0" },
+    { id: 2, name: "Peak Era\n1992–2016",    col: 0, color: "#58A6FF" },
+    { id: 3, name: "Swimming",   col: 1, color: "#F0B429" },
+    { id: 4, name: "Athletics",  col: 1, color: "#2DD4A0" },
+    { id: 5, name: "Cycling",    col: 1, color: "#58A6FF" },
+    { id: 6, name: "Rowing",     col: 1, color: "#C07A45" },
+    { id: 7, name: "Other",      col: 1, color: "#8B98A8" },
+    { id: 8,  name: "Gold",   col: 2, color: "#F0B429" },
+    { id: 9,  name: "Silver", col: 2, color: "#8B98A8" },
+    { id: 10, name: "Bronze", col: 2, color: "#C07A45" },
+  ];
+
+  // Era → Sport flows (approximate medal counts per era per sport)
+  const links = [
+    { s: 0, t: 3, v: 40 }, { s: 0, t: 4, v: 8  }, { s: 0, t: 7, v: 18 },
+    { s: 1, t: 3, v: 72 }, { s: 1, t: 4, v: 40 }, { s: 1, t: 5, v: 14 },
+    { s: 1, t: 6, v: 15 }, { s: 1, t: 7, v: 25 },
+    { s: 2, t: 3, v: 97 }, { s: 2, t: 4, v: 17 }, { s: 2, t: 5, v: 24 },
+    { s: 2, t: 6, v: 31 }, { s: 2, t: 7, v: 42 },
+    // Sport → Medal type
+    { s: 3, t: 8,  v: 60 }, { s: 3, t: 9,  v: 67 }, { s: 3, t: 10, v: 82 },
+    { s: 4, t: 8,  v: 21 }, { s: 4, t: 9,  v: 16 }, { s: 4, t: 10, v: 28 },
+    { s: 5, t: 8,  v: 14 }, { s: 5, t: 9,  v: 12 }, { s: 5, t: 10, v: 10 },
+    { s: 6, t: 8,  v: 11 }, { s: 6, t: 9,  v: 13 }, { s: 6, t: 10, v: 11 },
+    { s: 7, t: 8,  v: 28 }, { s: 7, t: 9,  v: 29 }, { s: 7, t: 10, v: 31 },
+  ];
+
+  // ── Layout ────────────────────────────────────────────────────────────────
+  // Node total value
+  const nodeVal = nodes.map(n => {
+    const asSrc = links.filter(l => l.s === n.id).reduce((a, l) => a + l.v, 0);
+    const asTgt = links.filter(l => l.t === n.id).reduce((a, l) => a + l.v, 0);
+    return Math.max(asSrc, asTgt);
+  });
+
+  const colX = [0, iW / 2, iW];
+
+  // Position nodes vertically within each column
+  [0, 1, 2].forEach(col => {
+    const colNodes = nodes.filter(n => n.col === col);
+    const totalVal = colNodes.reduce((a, n) => a + nodeVal[n.id], 0);
+    const totalGaps = GAP * (colNodes.length - 1);
+    const availH = iH - totalGaps;
+    let y = 0;
+    colNodes.forEach(n => {
+      n.x = colX[col];
+      n.y = y;
+      n.h = (nodeVal[n.id] / totalVal) * availH;
+      y += n.h + GAP;
+    });
+  });
+
+  // Compute link y offsets at source and target
+  links.forEach(l => {
+    const sn = nodes[l.s], tn = nodes[l.t];
+    const sLinks = links.filter(x => x.s === sn.id);
+    const tLinks = links.filter(x => x.t === tn.id);
+    const sTotal = nodeVal[sn.id];
+    const tTotal = nodeVal[tn.id];
+    const si = sLinks.indexOf(l);
+    const ti = tLinks.indexOf(l);
+    l.sy = sn.y + sLinks.slice(0, si).reduce((a, x) => a + (x.v / sTotal) * sn.h, 0);
+    l.ty = tn.y + tLinks.slice(0, ti).reduce((a, x) => a + (x.v / tTotal) * tn.h, 0);
+    l.sh = (l.v / sTotal) * sn.h;
+    l.th = (l.v / tTotal) * tn.h;
+  });
+
+  // ── SVG ───────────────────────────────────────────────────────────────────
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("width", W);
+  svg.setAttribute("height", H);
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.style.fontFamily = "Poppins, sans-serif";
+  svg.style.overflow = "visible";
+
+  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  g.setAttribute("transform", `translate(${PAD.left},${PAD.top})`);
+  svg.appendChild(g);
+
+  // Draw links
+  links.forEach(l => {
+    const sn = nodes[l.s], tn = nodes[l.t];
+    const x0 = sn.x + NODE_W, x1 = tn.x;
+    const xm = (x0 + x1) / 2;
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const d = [
+      `M${x0},${l.sy}`,
+      `C${xm},${l.sy} ${xm},${l.ty} ${x1},${l.ty}`,
+      `L${x1},${l.ty + l.th}`,
+      `C${xm},${l.ty + l.th} ${xm},${l.sy + l.sh} ${x0},${l.sy + l.sh}`,
+      "Z",
+    ].join(" ");
+    path.setAttribute("d", d);
+    path.setAttribute("fill", sn.color);
+    path.setAttribute("opacity", "0.3");
+    path.style.transition = "opacity 0.2s";
+    path.addEventListener("mouseenter", () => path.setAttribute("opacity", "0.65"));
+    path.addEventListener("mouseleave", () => path.setAttribute("opacity", "0.3"));
+
+    // Tooltip
+    const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+    title.textContent = `${sn.name.replace("\n", " ")} → ${tn.name}: ${l.v} medals`;
+    path.appendChild(title);
+    g.appendChild(path);
+  });
+
+  // Draw nodes + labels
+  nodes.forEach(n => {
+    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.setAttribute("x", n.x);
+    rect.setAttribute("y", n.y);
+    rect.setAttribute("width", NODE_W);
+    rect.setAttribute("height", Math.max(n.h, 2));
+    rect.setAttribute("fill", n.color);
+    rect.setAttribute("rx", 3);
+    g.appendChild(rect);
+
+    const lines = n.name.split("\n");
+    const ty = n.y + n.h / 2;
+
+    if (n.col === 0) {
+      // Left labels
+      lines.forEach((line, i) => {
+        const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        t.setAttribute("x", n.x - 10);
+        t.setAttribute("y", ty + (i - (lines.length - 1) / 2) * 16);
+        t.setAttribute("text-anchor", "end");
+        t.setAttribute("dominant-baseline", "middle");
+        t.setAttribute("font-size", i === 0 ? "12" : "10");
+        t.setAttribute("font-weight", i === 0 ? "600" : "400");
+        t.setAttribute("fill", i === 0 ? n.color : "#7D8590");
+        t.textContent = line;
+        g.appendChild(t);
+      });
+    } else if (n.col === 2) {
+      // Right labels
+      const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      t.setAttribute("x", n.x + NODE_W + 10);
+      t.setAttribute("y", ty);
+      t.setAttribute("text-anchor", "start");
+      t.setAttribute("dominant-baseline", "middle");
+      t.setAttribute("font-size", "12");
+      t.setAttribute("font-weight", "600");
+      t.setAttribute("fill", n.color);
+      t.textContent = n.name;
+      g.appendChild(t);
+    } else {
+      // Middle labels — above the node
+      lines.forEach((line, i) => {
+        const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        t.setAttribute("x", n.x + NODE_W / 2);
+        t.setAttribute("y", n.y - 8 - (lines.length - 1 - i) * 14);
+        t.setAttribute("text-anchor", "middle");
+        t.setAttribute("font-size", "11");
+        t.setAttribute("font-weight", "600");
+        t.setAttribute("fill", n.color);
+        t.textContent = line;
+        g.appendChild(t);
+      });
+    }
+  });
+
+  el.appendChild(svg);
+})();
