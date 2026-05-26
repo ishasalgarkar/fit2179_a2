@@ -893,7 +893,7 @@ vegaEmbed("#chart-gold-sport", {
     },
     // Head: filled circle at value
     {
-      mark: { type: "point", filled: true, size: 180, opacity: 1 },
+      mark: { type: "point", filled: true, size: 80, opacity: 1 },
       encoding: {
         y: { field: "Sport", type: "nominal", sort: "-x" },
         x: { field: "count", type: "quantitative" },
@@ -1422,7 +1422,7 @@ vegaEmbed(
       {
         mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle" },
         transform: [
-          { calculate: "datum.delta >= 0 ? datum.delta + 1.8 : datum.delta - 1.8", as: "labelX" },
+          { calculate: "datum.delta >= 0 ? datum.delta + 1.2 : datum.delta - 1.2", as: "labelX" },
           { calculate: "datum.delta >= 0 ? 'left' : 'right'", as: "labelAlign" },
         ],
         encoding: {
