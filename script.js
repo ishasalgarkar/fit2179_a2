@@ -1418,24 +1418,20 @@ vegaEmbed(
           ],
         },
       },
-      // Medal count label — right of dot for positive delta, left of dot for negative
+      // Medal count label — beside each dot using calculate to derive dx and anchor
       {
-        mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle", align: "left", dx: 14 },
-        transform: [{ filter: "datum.delta >= 0" }],
+        mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle" },
+        transform: [
+          { calculate: "datum.delta >= 0 ? datum.delta : datum.delta", as: "xPos" },
+          { calculate: "datum.delta >= 0 ? 'left' : 'right'", as: "textAlign" },
+          { calculate: "datum.delta >= 0 ? 14 : -14", as: "textDx" },
+        ],
         encoding: {
           y: { field: "city", type: "nominal", sort: { field: "year", order: "ascending" } },
-          x: { field: "delta", type: "quantitative" },
+          x: { field: "xPos", type: "quantitative" },
           text: { field: "aus_medals", type: "quantitative" },
-          color: { value: TEXT },
-        },
-      },
-      {
-        mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle", align: "right", dx: -14 },
-        transform: [{ filter: "datum.delta < 0" }],
-        encoding: {
-          y: { field: "city", type: "nominal", sort: { field: "year", order: "ascending" } },
-          x: { field: "delta", type: "quantitative" },
-          text: { field: "aus_medals", type: "quantitative" },
+          align: { field: "textAlign", type: "nominal" },
+          dx: { field: "textDx", type: "quantitative" },
           color: { value: TEXT },
         },
       },
