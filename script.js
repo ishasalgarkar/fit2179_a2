@@ -1387,9 +1387,9 @@ vegaEmbed(
           },
         },
       },
-      // Head: filled dot at delta
+      // Head: filled dot at delta — smaller so labels clear it
       {
-        mark: { type: "point", filled: true, size: 180, opacity: 1 },
+        mark: { type: "point", filled: true, size: 60, opacity: 1 },
         encoding: {
           y: {
             field: "city",
@@ -1418,31 +1418,18 @@ vegaEmbed(
           ],
         },
       },
-      // Medal count label — positive side (right of dot)
+      // Medal count label — shifted in DATA SPACE by 1.8 units so it clears the dot
       {
-        mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle", align: "left", dx: 16, dy: 0 },
+        mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle" },
         transform: [
-          { calculate: "datum.delta", as: "delta" },
-          { filter: "datum.delta >= 0" },
+          { calculate: "datum.delta >= 0 ? datum.delta + 1.8 : datum.delta - 1.8", as: "labelX" },
+          { calculate: "datum.delta >= 0 ? 'left' : 'right'", as: "labelAlign" },
         ],
         encoding: {
           y: { field: "city", type: "nominal", sort: { field: "year", order: "ascending" } },
-          x: { field: "delta", type: "quantitative" },
+          x: { field: "labelX", type: "quantitative" },
           text: { field: "aus_medals", type: "quantitative" },
-          color: { value: TEXT },
-        },
-      },
-      // Medal count label — negative side (left of dot)
-      {
-        mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle", align: "right", dx: -16, dy: 0 },
-        transform: [
-          { calculate: "datum.delta", as: "delta" },
-          { filter: "datum.delta < 0" },
-        ],
-        encoding: {
-          y: { field: "city", type: "nominal", sort: { field: "year", order: "ascending" } },
-          x: { field: "delta", type: "quantitative" },
-          text: { field: "aus_medals", type: "quantitative" },
+          align: { field: "labelAlign", type: "nominal" },
           color: { value: TEXT },
         },
       },
