@@ -545,12 +545,7 @@ const ageStats = [
   { decade: "2010s", min: 16, q1: 21, median: 24, q3: 28, max: 61 },
 ];
  
-// ─────────────────────────────────────────────────────────────────────────────
-// CUSTOM IDIOM 1 — SLOPE CHART
-// Medal share (%) of each major sport across four defining eras.
-// Derived metric: (sport medals / era total) × 100
-// Era totals: 1970s = 17, Sydney 2000 = 58, Post-Sydney avg (2004+2008)/2 ≈ 47.5, Paris 2024 = 53
-// ─────────────────────────────────────────────────────────────────────────────
+
 const slopeData = [
   { Sport: "Swimming",  era: "1970s",       share: 82.4 },
   { Sport: "Swimming",  era: "Sydney 2000", share: 31.0 },
@@ -574,11 +569,7 @@ const slopeData = [
   { Sport: "Sailing",   era: "Paris 2024",  share: 7.5  },
 ];
  
-// ─────────────────────────────────────────────────────────────────────────────
-// CUSTOM IDIOM 2 — DIVERGING BAR
-// Derived field: delta = sydney_2000 − other_games_avg
-// Encodes direction (over/under) via colour + bar direction from zero baseline
-// ─────────────────────────────────────────────────────────────────────────────
+
 const divergingData = sydneyData.map((d) => ({
   Sport: d.Sport,
   delta: Math.round((d.sydney_2000 - d.other_games_avg) * 10) / 10,
@@ -588,10 +579,7 @@ const divergingData = sydneyData.map((d) => ({
  
 const TOPO = "https://cdn.jsdelivr.net/npm/vega-datasets@2/data/world-110m.json";
  
-// ════════════════════════════════════════════════════════════════════════════
-// MAP 1 — World total medals choropleth
-// ════════════════════════════════════════════════════════════════════════════
-// Render all Vega-Lite charts after DOM is ready
+
 document.addEventListener('DOMContentLoaded', function() {
 
 vegaEmbed("#map-world", {
@@ -619,9 +607,7 @@ vegaEmbed("#map-world", {
   ],
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// MAP 2 — Per capita choropleth
-// ════════════════════════════════════════════════════════════════════════════
+
 vegaEmbed("#map-per-million", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 420, config: CFG,
@@ -647,9 +633,7 @@ vegaEmbed("#map-per-million", {
   ],
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// CHART 1 — Bar: top 20 nations per capita
-// ════════════════════════════════════════════════════════════════════════════
+
 vegaEmbed("#chart-per-million", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 440, config: CFG,
@@ -668,7 +652,7 @@ vegaEmbed("#chart-per-million", {
         ],
       },
     },
-    // Annotation: label beside Australia bar
+    
     {
       mark: { type: "text", align: "left", dx: 6, fontSize: 11, fontWeight: 600, fontStyle: "italic" },
       transform: [{ filter: "datum.NOC == 'AUS'" }],
@@ -682,9 +666,7 @@ vegaEmbed("#chart-per-million", {
   ],
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// CHART 2 — Stacked area: trajectory 1896–2016 with Sydney annotation
-// ════════════════════════════════════════════════════════════════════════════
+
 vegaEmbed("#chart-trajectory", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 340, config: CFG,
@@ -703,13 +685,13 @@ vegaEmbed("#chart-trajectory", {
         tooltip: [{ field: "Year", type: "quantitative" }, { field: "Medal" }, { field: "count", title: "Count" }],
       },
     },
-    // Sydney 2000 annotation rule
+  
     {
       mark: { type: "rule", color: "rgba(240,180,41,0.5)", strokeDash: [4,3], strokeWidth: 1.5 },
       data: { values: [{ Year: 2000 }] },
       encoding: { x: { field: "Year", type: "quantitative" } },
     },
-    // Sydney 2000 label
+    
     {
       mark: { type: "text", align: "right", dx: -4, dy: 10, fontSize: 10, fontWeight: 600, fontStyle: "italic" },
       data: { values: [{ Year: 2000, count: 58 }] },
@@ -720,13 +702,13 @@ vegaEmbed("#chart-trajectory", {
         color: { value: GOLD },
       },
     },
-    // AIS founding annotation
+    
     {
       mark: { type: "rule", color: "rgba(45,212,160,0.3)", strokeDash: [4,3], strokeWidth: 1 },
       data: { values: [{ Year: 1981 }] },
       encoding: { x: { field: "Year", type: "quantitative" } },
     },
-    // AIS label
+    
     {
       mark: { type: "text", align: "left", dx: 4, dy: 10, fontSize: 10, fontWeight: 600, fontStyle: "italic" },
       data: { values: [{ Year: 1981, count: 40 }] },
@@ -740,13 +722,9 @@ vegaEmbed("#chart-trajectory", {
   ],
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// CHART 3 — Connected dot plot: rank at every Games
-// ════════════════════════════════════════════════════════════════════════════
-// ── BUMP CHART: Medal tally rank — Australia vs rival nations 1980–2024 ──────
-// year stored as STRING so Vega-Lite treats x-axis as ordinal (evenly spaced).
+
 const bumpData = [
-  // Australia
+  
   { country: "Australia",   year: "1980", rank: 13 },
   { country: "Australia",   year: "1984", rank: 10 },
   { country: "Australia",   year: "1988", rank: 13 },
@@ -758,7 +736,7 @@ const bumpData = [
   { country: "Australia",   year: "2012", rank: 7  },
   { country: "Australia",   year: "2016", rank: 8  },
   { country: "Australia",   year: "2024", rank: 5  },
-  // USA
+  
   { country: "USA",         year: "1984", rank: 1  },
   { country: "USA",         year: "1988", rank: 3  },
   { country: "USA",         year: "1992", rank: 2  },
@@ -769,7 +747,7 @@ const bumpData = [
   { country: "USA",         year: "2012", rank: 1  },
   { country: "USA",         year: "2016", rank: 1  },
   { country: "USA",         year: "2024", rank: 1  },
-  // China
+  
   { country: "China",       year: "1984", rank: 4  },
   { country: "China",       year: "1988", rank: 11 },
   { country: "China",       year: "1992", rank: 4  },
@@ -780,7 +758,7 @@ const bumpData = [
   { country: "China",       year: "2012", rank: 2  },
   { country: "China",       year: "2016", rank: 3  },
   { country: "China",       year: "2024", rank: 2  },
-  // Great Britain
+  
   { country: "Gr. Britain", year: "1984", rank: 11 },
   { country: "Gr. Britain", year: "1988", rank: 12 },
   { country: "Gr. Britain", year: "1992", rank: 13 },
@@ -791,7 +769,7 @@ const bumpData = [
   { country: "Gr. Britain", year: "2012", rank: 3  },
   { country: "Gr. Britain", year: "2016", rank: 2  },
   { country: "Gr. Britain", year: "2024", rank: 7  },
-  // Germany
+  
   { country: "Germany",     year: "1984", rank: 3  },
   { country: "Germany",     year: "1988", rank: 2  },
   { country: "Germany",     year: "1992", rank: 3  },
@@ -802,7 +780,7 @@ const bumpData = [
   { country: "Germany",     year: "2012", rank: 6  },
   { country: "Germany",     year: "2016", rank: 5  },
   { country: "Germany",     year: "2024", rank: 10 },
-  // France
+  
   { country: "France",      year: "1984", rank: 9  },
   { country: "France",      year: "1988", rank: 9  },
   { country: "France",      year: "1992", rank: 8  },
@@ -826,8 +804,7 @@ vegaEmbed("#chart-rank", {
   config: CFG,
   data: { values: bumpData },
   layer: [
-    // Sydney 2000 highlight — rect behind the "2000" ordinal band
-    // Use a text-background rect trick: we draw it as a full-height bar on x="2000"
+    
     {
       mark: { type: "bar", width: 32, opacity: 0.10, color: GOLD, clip: false },
       data: { values: [{ year: "2000", lo: 1, hi: 15 }] },
@@ -837,7 +814,7 @@ vegaEmbed("#chart-rank", {
         y2: { field: "hi" },
       },
     },
-    // "Sydney 2000" annotation label at top of that column
+    
     {
       mark: { type: "text", fontSize: 10, fontWeight: 600, fontStyle: "italic", dy: -8 },
       data: { values: [{ year: "2000", rank: 1 }] },
@@ -848,7 +825,7 @@ vegaEmbed("#chart-rank", {
         color: { value: GOLD },
       },
     },
-    // Lines — one per country, evenly spaced x (ordinal)
+    
     {
       mark: { type: "line", strokeWidth: 2.5, interpolate: "monotone", opacity: 0.9 },
       encoding: {
@@ -875,7 +852,7 @@ vegaEmbed("#chart-rank", {
         ],
       },
     },
-    // Dots at each Games node
+    
     {
       mark: { type: "point", filled: true, size: 80, opacity: 1 },
       encoding: {
@@ -893,7 +870,7 @@ vegaEmbed("#chart-rank", {
         ],
       },
     },
-    // Country name labels pinned at 2024 (rightmost column)
+    
     {
       mark: { type: "text", align: "left", dx: 10, fontSize: 11, fontWeight: 600 },
       transform: [{ filter: "datum.year == '2024'" }],
@@ -907,7 +884,7 @@ vegaEmbed("#chart-rank", {
         },
       },
     },
-    // Rank number labels on Australia line at every node
+    
     {
       mark: { type: "text", dy: -13, fontSize: 10, fontWeight: 700 },
       transform: [{ filter: "datum.country == 'Australia'" }],
@@ -926,7 +903,7 @@ vegaEmbed("#chart-gold-sport", {
   width: "container", height: 660, config: CFG,
   data: { values: bySport.filter(d => d.Medal === "Gold").sort((a,b) => b.count - a.count) },
   layer: [
-    // Stem: rule from 0 to count
+    
     {
       mark: { type: "rule", strokeWidth: 2.5, opacity: 0.7 },
       encoding: {
@@ -936,7 +913,7 @@ vegaEmbed("#chart-gold-sport", {
         color: { condition: { test: "datum.Sport=='Swimming'", value: GOLD }, value: "#3A5060" },
       },
     },
-    // Head: filled circle at value
+    
     {
       mark: { type: "point", filled: true, size: 80, opacity: 1 },
       encoding: {
@@ -946,7 +923,7 @@ vegaEmbed("#chart-gold-sport", {
         tooltip: [{ field: "Sport" }, { field: "count", title: "Gold medals" }],
       },
     },
-    // Count labels
+    
     {
       mark: { type: "text", dx: 16, fontSize: 12, fontWeight: 700, align: "left" },
       encoding: {
@@ -956,7 +933,7 @@ vegaEmbed("#chart-gold-sport", {
         color: { condition: { test: "datum.Sport=='Swimming'", value: GOLD }, value: TEXT },
       },
     },
-    // Annotation: Swimming dominance — above the dot
+    
     {
       mark: { type: "text", align: "left", dx: 8, dy: -14, fontSize: 11, fontWeight: 600, fontStyle: "italic", clip: false },
       data: { values: [{ Sport: "Swimming", count: 62 }] },
@@ -970,30 +947,26 @@ vegaEmbed("#chart-gold-sport", {
   ],
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// CHART 5 — Stacked bar: all medals top 10 sports
-// ════════════════════════════════════════════════════════════════════════════
-// ── SANKEY: Sport → Medal type flow (replaces stacked bar chart-sport-all) ──
-// Built with D3 + d3-sankey via CDN. Renders into #chart-sport-all div.
+
 (function buildSankey() {
   const SANKEY_SPORTS = [
     "Swimming","Athletics","Cycling","Rowing","Sailing",
     "Equestrianism","Shooting","Hockey","Canoeing","Diving"
   ];
 
-  // Aggregate: sum gold/silver/bronze per sport from bySport
+  
   const sportTotals = {};
   SANKEY_SPORTS.forEach(s => { sportTotals[s] = { Gold: 0, Silver: 0, Bronze: 0 }; });
   bySport.forEach(d => {
     if (sportTotals[d.Sport] && d.Medal) sportTotals[d.Sport][d.Medal] += d.count;
   });
 
-  // Nodes: sports (left) + medal types (right)
+  
   const nodeNames = [...SANKEY_SPORTS, "Gold", "Silver", "Bronze"];
   const nodeIndex = {};
   nodeNames.forEach((n, i) => nodeIndex[n] = i);
 
-  // Links: sport → medal type
+  
   const links = [];
   SANKEY_SPORTS.forEach(sport => {
     ["Gold","Silver","Bronze"].forEach(medal => {
@@ -1002,7 +975,7 @@ vegaEmbed("#chart-gold-sport", {
     });
   });
 
-  // Colour map
+  
   const nodeColors = {};
   SANKEY_SPORTS.forEach(s => nodeColors[s] = "#2DD4A0");
   nodeColors["Gold"]   = "#F0B429";
@@ -1037,7 +1010,7 @@ vegaEmbed("#chart-gold-sport", {
       links: links.map(l => ({ ...l })),
     });
 
-    // ── Custom HTML tooltip ──────────────────────────────────────────────────
+    
     let tip = document.getElementById("__sankey_tip__");
     if (!tip) {
       tip = document.createElement("div");
@@ -1055,7 +1028,7 @@ vegaEmbed("#chart-gold-sport", {
     function moveTip(e) { tip.style.left = (e.clientX + 14) + "px"; tip.style.top = (e.clientY - 10) + "px"; }
     function hideTip() { tip.style.opacity = "0"; }
 
-    // Draw links
+    
     const linkPath = d3.sankeyLinkHorizontal();
     svg.append("g").selectAll("path")
       .data(graph.links)
@@ -1073,7 +1046,7 @@ vegaEmbed("#chart-gold-sport", {
         .on("mousemove", function(e) { moveTip(e); })
         .on("mouseleave", function() { d3.select(this).attr("opacity", 0.38); hideTip(); });
 
-    // Draw nodes
+  
     const node = svg.append("g").selectAll("g")
       .data(graph.nodes)
       .join("g");
@@ -1091,7 +1064,7 @@ vegaEmbed("#chart-gold-sport", {
       .on("mousemove", function(e) { moveTip(e); })
       .on("mouseleave", function() { hideTip(); });
 
-    // Node labels — sports on left, medal types on right
+    
     node.append("text")
       .attr("x", d => d.x0 < W / 2 ? d.x0 - 8 : d.x1 + 8)
       .attr("y", d => (d.y0 + d.y1) / 2)
@@ -1103,7 +1076,7 @@ vegaEmbed("#chart-gold-sport", {
       .attr("font-weight", "600")
       .text(d => d.name);
 
-    // Medal count on right-side nodes
+    
     node.filter(d => ["Gold","Silver","Bronze"].includes(d.name))
       .append("text")
       .attr("x", d => d.x1 + 8)
@@ -1114,7 +1087,7 @@ vegaEmbed("#chart-gold-sport", {
       .text(d => `${d.value} medals`);
   }
 
-  // Load D3 + d3-sankey from CDN then render
+  
   function loadScript(src, cb) {
     const s = document.createElement("script");
     s.src = src; s.onload = cb; document.head.appendChild(s);
@@ -1131,9 +1104,7 @@ vegaEmbed("#chart-gold-sport", {
   }
 })();
  
-// ════════════════════════════════════════════════════════════════════════════
-// CHART 6 — Donut: summer vs winter
-// ════════════════════════════════════════════════════════════════════════════
+
 vegaEmbed("#chart-summer-winter", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 380, config: CFG,
@@ -1155,7 +1126,7 @@ vegaEmbed("#chart-summer-winter", {
         color: { value: TEXT },
       },
     },
-    // Centre annotation
+    
     {
       mark: { type: "text", fontSize: 22, fontWeight: 800, dy: -12 },
       data: { values: [{ label: "98.8%" }] },
@@ -1175,16 +1146,13 @@ vegaEmbed("#chart-summer-winter", {
   ],
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// CHART 7 — HEATMAP with zeros filled, threshold scale, gold peak outlines,
-//           and count labels inside cells
-// ════════════════════════════════════════════════════════════════════════════
+
 vegaEmbed("#chart-heatmap", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 420, config: CFG,
   data: { values: heatmapFilled },
   layer: [
-    // Base rectangles
+    
     {
       mark: { type: "rect", cornerRadius: 2, stroke: "#0D1117", strokeWidth: 1 },
       encoding: {
@@ -1211,7 +1179,7 @@ vegaEmbed("#chart-heatmap", {
         tooltip: [{ field: "Sport" }, { field: "decade", title: "Decade" }, { field: "medal_count", title: "Medals" }],
       },
     },
-    // Count labels
+   
     {
       mark: { type: "text", fontSize: 10, fontWeight: 500 },
       encoding: {
@@ -1224,7 +1192,7 @@ vegaEmbed("#chart-heatmap", {
         color: { condition: { test: "datum.medal_count >= 24", value: "#1a1a1a" }, value: "rgba(255,255,255,0.8)" },
       },
     },
-    // Gold outline on peak decade per sport — uses pre-computed isPeak field
+    
     {
       mark: { type: "rect", filled: false, stroke: GOLD, strokeWidth: 2, cornerRadius: 2 },
       transform: [
@@ -1241,17 +1209,13 @@ vegaEmbed("#chart-heatmap", {
   ],
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// CHART 8 — SLOPE CHART: medal share across four eras  ◀ CUSTOM IDIOM 1
-// Derived metric: % share of Australian total per era
-// Multi-series line + point overlay + sport labels at Paris 2024 end
-// ════════════════════════════════════════════════════════════════════════════
+
 vegaEmbed("#chart-slope", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
    width: "container", height: 560, padding: {right: 80}, config: CFG,
   data: { values: slopeData },
   layer: [
-    // Connection lines
+    
     {
       mark: { type: "line", strokeWidth: 2.5, opacity: 0.85, interpolate: "linear" },
       encoding: {
@@ -1274,7 +1238,7 @@ vegaEmbed("#chart-slope", {
         tooltip: [{ field: "Sport" }, { field: "era", title: "Era" }, { field: "share", title: "Medal share %", format: ".1f" }],
       },
     },
-    // Nodes (dots at each era)
+    
     {
       mark: { type: "point", filled: true, size: 100, opacity: 1 },
       encoding: {
@@ -1287,7 +1251,7 @@ vegaEmbed("#chart-slope", {
         tooltip: [{ field: "Sport" }, { field: "era", title: "Era" }, { field: "share", title: "Medal share %", format: ".1f" }],
       },
     },
-    // Final value label at Paris 2024 end only — no sport name, just the number
+    
     {
       mark: { type: "text", align: "left", dx: 8, fontSize: 11, fontWeight: 700 },
       transform: [{ filter: "datum.era == 'Paris 2024'" }],
@@ -1301,7 +1265,7 @@ vegaEmbed("#chart-slope", {
         },
       },
     },
-    // Annotation: Swimming 1970s peak
+   
     {
       mark: { type: "text", fontSize: 10, fontWeight: 600, fontStyle: "italic", align: "center", dy: -16 },
       data: { values: [{ era: "1970s", share: 82 }] },
@@ -1312,7 +1276,7 @@ vegaEmbed("#chart-slope", {
         color: { value: GOLD },
       },
     },
-    // Annotation: Athletics Paris surge
+    
     {
       mark: { type: "text", fontSize: 10, fontWeight: 600, fontStyle: "italic", align: "right", dx: -8, dy: -14 },
       data: { values: [{ era: "Paris 2024", share: 13 }] },
@@ -1326,22 +1290,18 @@ vegaEmbed("#chart-slope", {
   ],
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// CHART 9 — DIVERGING BAR: Sydney 2000 delta from historical average  ◀ CUSTOM IDIOM 2
-// Derived field: delta = sydney_2000 − other_games_avg
-// Positive bars (teal) = over-performed; negative (bronze) = under-performed
-// ════════════════════════════════════════════════════════════════════════════
+
 vegaEmbed("#chart-diverging", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 580, padding: { right: 20 }, config: CFG,
   data: { values: divergingData },
   layer: [
-    // Zero reference line
+    
     {
       mark: { type: "rule", color: "rgba(255,255,255,0.3)", strokeWidth: 1.5 },
       encoding: { x: { datum: 0 } },
     },
-    // Diverging bars
+    
     {
       mark: { type: "bar", cornerRadiusTopRight: 3, cornerRadiusBottomRight: 3, cornerRadiusTopLeft: 3, cornerRadiusBottomLeft: 3 },
       encoding: {
@@ -1363,7 +1323,7 @@ vegaEmbed("#chart-diverging", {
         ],
       },
     },
-    // Delta value labels — anchored to bar end, offset outward so never on bar
+    
     {
       mark: { type: "text", fontSize: 11, fontWeight: 600, baseline: "middle", align: "left", dx: 6 },
       transform: [{ filter: "datum.delta > 0" }],
@@ -1394,7 +1354,7 @@ vegaEmbed("#chart-diverging", {
         color: { value: MUTED },
       },
     },
-    // Annotation for the largest surge — placed below Swimming bar
+    
     {
       mark: { type: "text", fontSize: 10, fontStyle: "italic", align: "left", dx: 8, dy: 12 },
       data: { values: [{ Sport: "Swimming", delta: 10.71, note: "Largest single-sport home-Games surge" }] },
@@ -1408,9 +1368,7 @@ vegaEmbed("#chart-diverging", {
   ],
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// CHART 10 — Scatter: Sydney 2000 vs average
-// ════════════════════════════════════════════════════════════════════════════
+
 vegaEmbed("#chart-sydney-scatter", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 400, config: CFG,
@@ -1443,7 +1401,7 @@ vegaEmbed("#chart-sydney-scatter", {
         opacity: { condition: { test: "datum.sydney_2000>=3", value: 1 }, value: 0 },
       },
     },
-    // Diagonal "no change" line label
+    
     {
       mark: { type: "text", fontSize: 10, fontWeight: 500, fontStyle: "italic", align: "left", dx: 6, dy: 0 },
       data: { values: [{ x: 15, y: 13 }] },
@@ -1454,7 +1412,7 @@ vegaEmbed("#chart-sydney-scatter", {
         color: { value: MUTED },
       },
     },
-    // Swimming callout — below and right of dot to avoid clashing with "Swimming" label
+    
     {
       mark: { type: "text", fontSize: 11, fontWeight: 700, fontStyle: "italic", align: "left", dx: 10, dy: 18 },
       data: { values: [{ x: 7.5, y: 18 }] },
@@ -1468,9 +1426,7 @@ vegaEmbed("#chart-sydney-scatter", {
   ],
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// MAP 3 — Australia states choropleth
-// ════════════════════════════════════════════════════════════════════════════
+
 vegaEmbed("#map-australia", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 440, config: CFG,
@@ -1496,9 +1452,7 @@ vegaEmbed("#map-australia", {
   ],
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// CHART 11 — Grouped bar: Sydney 2000 vs Paris 2024
-// ════════════════════════════════════════════════════════════════════════════
+
 vegaEmbed("#chart-sydney-paris", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 360, config: CFG,
@@ -1517,9 +1471,7 @@ vegaEmbed("#chart-sydney-paris", {
   },
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// CHART 12 — Stacked bar: Paris 2024 breakdown
-// ════════════════════════════════════════════════════════════════════════════
+
 vegaEmbed("#chart-paris", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 400, config: CFG,
@@ -1544,9 +1496,7 @@ vegaEmbed("#chart-paris", {
   },
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// CHART 13 — Box plot: age of medal winners by decade
-// ════════════════════════════════════════════════════════════════════════════
+
 vegaEmbed("#chart-ages", {
   $schema: "https://vega.github.io/schema/vega-lite/v5.json",
   width: "container", height: 400, config: CFG,
@@ -1583,13 +1533,13 @@ vegaEmbed("#chart-ages", {
         ],
       },
     },
-    // Horizontal reference line at median age ~23
+    
     {
       mark: { type: "rule", color: "rgba(240,180,41,0.25)", strokeDash: [4,3], strokeWidth: 1.5 },
       data: { values: [{ y: 23 }] },
       encoding: { y: { field: "y", type: "quantitative" } },
     },
-    // Label for median line
+    
     {
       mark: { type: "text", align: "left", dx: 4, dy: -6, fontSize: 10, fontWeight: 600, fontStyle: "italic" },
       data: { values: [{ decade: "1890s", y: 55 }] },
@@ -1600,7 +1550,7 @@ vegaEmbed("#chart-ages", {
         color: { value: GOLD },
       },
     },
-    // Annotation: 1950s wider spread
+    
     {
       mark: { type: "text", align: "center", dx: 0, dy: -10, fontSize: 10, fontWeight: 600, fontStyle: "italic" },
       data: { values: [{ decade: "1950s", y: 52 }] },
@@ -1615,14 +1565,7 @@ vegaEmbed("#chart-ages", {
   resolve: { scale: { y: "shared" } },
 }, O);
  
-// ════════════════════════════════════════════════════════════════════════════
-// MAP 4 — Bubble chart: medal haul per Games 1980–2032
-// Labels only shown for medals ≥ 40 or home Games to avoid clutter
-// City and count labels given different vertical offsets to prevent overlap
-// ════════════════════════════════════════════════════════════════════════════
-// ── DIVERGING DOT PLOT: Australia's medal haul vs Rio 2016 baseline ──────────
-// Each Games shown as a horizontal dot. Stem extends from zero (= Rio 2016 = 29).
-// Rightward = better than Rio; leftward = worse. Sydney 2000 and home Games in gold.
+
 vegaEmbed(
   "#map-host-cities",
   {
@@ -1637,12 +1580,12 @@ vegaEmbed(
       { calculate: "datum.aus_medals - 29", as: "delta" },
     ],
     layer: [
-      // Zero baseline (Rio 2016 = 29 medals)
+      
       {
         mark: { type: "rule", color: "rgba(255,255,255,0.3)", strokeWidth: 1.5 },
         encoding: { x: { datum: 0 } },
       },
-      // Positive half shading
+      
       {
         mark: { type: "rect", opacity: 0.04, color: GREEN },
         encoding: {
@@ -1652,7 +1595,7 @@ vegaEmbed(
           y2: { value: 380 },
         },
       },
-      // Stem: rule from 0 to delta
+      
       {
         mark: { type: "rule", strokeWidth: 2.5, opacity: 0.6 },
         encoding: {
@@ -1670,7 +1613,7 @@ vegaEmbed(
           },
         },
       },
-      // Head: filled dot at delta — smaller so labels clear it
+      
       {
         mark: { type: "point", filled: true, size: 60, opacity: 1 },
         encoding: {
@@ -1701,7 +1644,7 @@ vegaEmbed(
           ],
         },
       },
-      // Medal count label — positive side (left align, shifted right in data space)
+      
       {
         mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle", align: "left" },
         transform: [
@@ -1715,7 +1658,7 @@ vegaEmbed(
           color: { value: TEXT },
         },
       },
-      // Medal count label — negative side (right align, shifted left in data space)
+      
       {
         mark: { type: "text", fontSize: 11, fontWeight: 700, baseline: "middle", align: "right" },
         transform: [
@@ -1729,7 +1672,7 @@ vegaEmbed(
           color: { value: TEXT },
         },
       },
-      // Year label pinned to the far left
+      
       {
         mark: {
           type: "text",
@@ -1754,11 +1697,9 @@ vegaEmbed(
   O,
 );
 
-// ════════════════════════════════════════════════════════════════════════════
-// SANKEY — Medal flow: Era → Sport → Medal Type  (pure D3/SVG, no Vega-Lite)
-// ════════════════════════════════════════════════════════════════════════════
 
-}); // end DOMContentLoaded
+
+}); 
 
 (function buildSankey() {
   const el = document.getElementById("chart-sankey");
@@ -1772,8 +1713,7 @@ vegaEmbed(
   const NODE_W = 16;
   const GAP = 14;
 
-  // ── Data ──────────────────────────────────────────────────────────────────
-  // Nodes: col 0 = Era, col 1 = Sport, col 2 = Medal type
+  
   const nodes = [
     { id: 0, name: "Early Era\n1896–1956",   col: 0, color: "#F0B429" },
     { id: 1, name: "Growth Era\n1960–1988",  col: 0, color: "#2DD4A0" },
@@ -1788,14 +1728,14 @@ vegaEmbed(
     { id: 10, name: "Bronze", col: 2, color: "#C07A45" },
   ];
 
-  // Era → Sport flows (approximate medal counts per era per sport)
+  
   const links = [
     { s: 0, t: 3, v: 40 }, { s: 0, t: 4, v: 8  }, { s: 0, t: 7, v: 18 },
     { s: 1, t: 3, v: 72 }, { s: 1, t: 4, v: 40 }, { s: 1, t: 5, v: 14 },
     { s: 1, t: 6, v: 15 }, { s: 1, t: 7, v: 25 },
     { s: 2, t: 3, v: 97 }, { s: 2, t: 4, v: 17 }, { s: 2, t: 5, v: 24 },
     { s: 2, t: 6, v: 31 }, { s: 2, t: 7, v: 42 },
-    // Sport → Medal type
+    
     { s: 3, t: 8,  v: 60 }, { s: 3, t: 9,  v: 67 }, { s: 3, t: 10, v: 82 },
     { s: 4, t: 8,  v: 21 }, { s: 4, t: 9,  v: 16 }, { s: 4, t: 10, v: 28 },
     { s: 5, t: 8,  v: 14 }, { s: 5, t: 9,  v: 12 }, { s: 5, t: 10, v: 10 },
@@ -1803,8 +1743,7 @@ vegaEmbed(
     { s: 7, t: 8,  v: 28 }, { s: 7, t: 9,  v: 29 }, { s: 7, t: 10, v: 31 },
   ];
 
-  // ── Layout ────────────────────────────────────────────────────────────────
-  // Node total value
+  
   const nodeVal = nodes.map(n => {
     const asSrc = links.filter(l => l.s === n.id).reduce((a, l) => a + l.v, 0);
     const asTgt = links.filter(l => l.t === n.id).reduce((a, l) => a + l.v, 0);
@@ -1813,7 +1752,7 @@ vegaEmbed(
 
   const colX = [0, iW / 2, iW];
 
-  // Position nodes vertically within each column
+  
   [0, 1, 2].forEach(col => {
     const colNodes = nodes.filter(n => n.col === col);
     const totalVal = colNodes.reduce((a, n) => a + nodeVal[n.id], 0);
@@ -1828,7 +1767,7 @@ vegaEmbed(
     });
   });
 
-  // Compute link y offsets at source and target
+  
   links.forEach(l => {
     const sn = nodes[l.s], tn = nodes[l.t];
     const sLinks = links.filter(x => x.s === sn.id);
@@ -1843,7 +1782,7 @@ vegaEmbed(
     l.th = (l.v / tTotal) * tn.h;
   });
 
-  // ── Custom white tooltip ─────────────────────────────────────────────────
+ 
   const s2tip = document.createElement("div");
   s2tip.style.cssText = [
     "position:fixed","background:#fff","color:#111","border-radius:8px",
@@ -1855,7 +1794,7 @@ vegaEmbed(
   document.body.appendChild(s2tip);
   function s2move(e) { s2tip.style.left=(e.clientX+14)+"px"; s2tip.style.top=(e.clientY-10)+"px"; }
 
-  // ── SVG ───────────────────────────────────────────────────────────────────
+ 
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("width", W);
   svg.setAttribute("height", H);
@@ -1867,7 +1806,7 @@ vegaEmbed(
   g.setAttribute("transform", `translate(${PAD.left},${PAD.top})`);
   svg.appendChild(g);
 
-  // Draw links
+  
   links.forEach(l => {
     const sn = nodes[l.s], tn = nodes[l.t];
     const x0 = sn.x + NODE_W, x1 = tn.x;
@@ -1886,7 +1825,7 @@ vegaEmbed(
     path.style.transition = "opacity 0.2s";
     path.style.cursor = "pointer";
 
-    // Custom white tooltip
+   
     const tipHtml = `<span style="color:#888;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">${sn.name.replace("\n"," ")} → ${tn.name}</span><br><span style="font-weight:700;font-size:15px;color:#111">${l.v}</span> <span style="color:#666">medals</span>`;
     path.addEventListener("mouseenter", e => { path.setAttribute("opacity","0.65"); s2tip.innerHTML=tipHtml; s2tip.style.opacity="1"; s2move(e); });
     path.addEventListener("mousemove",  e => s2move(e));
@@ -1894,7 +1833,7 @@ vegaEmbed(
     g.appendChild(path);
   });
 
-  // Draw nodes + labels
+  
   nodes.forEach(n => {
     const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     rect.setAttribute("x", n.x);
@@ -1914,7 +1853,7 @@ vegaEmbed(
     const ty = n.y + n.h / 2;
 
     if (n.col === 0) {
-      // Left labels
+      
       lines.forEach((line, i) => {
         const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
         t.setAttribute("x", n.x - 10);
@@ -1928,7 +1867,7 @@ vegaEmbed(
         g.appendChild(t);
       });
     } else if (n.col === 2) {
-      // Right labels
+      
       const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
       t.setAttribute("x", n.x + NODE_W + 10);
       t.setAttribute("y", ty);
@@ -1940,7 +1879,7 @@ vegaEmbed(
       t.textContent = n.name;
       g.appendChild(t);
     } else {
-      // Middle labels — above the node
+      
       lines.forEach((line, i) => {
         const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
         t.setAttribute("x", n.x + NODE_W / 2);
